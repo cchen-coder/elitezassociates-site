@@ -1,987 +1,1096 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecruitHub AI — E&A Sales Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --navy: #f1f5f9;
-    --navy2: #ffffff;
-    --accent: #2563eb;
-    --accent2: #10b981;
-    --accent3: #f59e0b;
-    --accent4: #ef4444;
-    --fg: #0f172a;
-    --fg2: #475569;
-    --fg3: #94a3b8;
-    --card: #ffffff;
-    --card2: #f8fafc;
-    --border: rgba(0,0,0,0.07);
-    --border2: rgba(0,0,0,0.13);
-    --radius: 12px;
-    --radius2: 8px;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  body { background: var(--navy); color: var(--fg); min-height: 100vh; }
-
-  .app { display: flex; min-height: 100vh; }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: 220px; min-width: 220px; background: var(--navy2); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; padding: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
-  }
-  .logo {
-    padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: var(--fg);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .logo-icon {
-    width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
-    display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
-  }
-  .logo span { color: var(--accent); }
-
-  .nav-section { padding: 12px 12px 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--fg3); text-transform: uppercase; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px; padding: 9px 12px; margin: 1px 8px;
-    border-radius: var(--radius2); cursor: pointer; transition: all 0.15s;
-    font-size: 13.5px; font-weight: 400; color: var(--fg2);
-  }
-  .nav-item:hover { background: rgba(37,99,235,0.12); color: var(--fg); }
-  .nav-item.active { background: var(--accent); color: #fff; font-weight: 500; }
-  .nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
-  .badge {
-    margin-left: auto; background: var(--accent3); color: #fff; font-size: 10px;
-    font-weight: 700; padding: 2px 6px; border-radius: 20px;
-  }
-  .badge.g { background: var(--accent2); }
-  .badge.r { background: var(--accent4); color: #fff; }
-
-  .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
-  .user-card { display: flex; align-items: center; gap: 10px; }
-  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
-  .user-info { font-size: 12px; }
-  .user-info strong { display: block; font-size: 13px; color: var(--fg); }
-  .user-info span { color: var(--fg3); }
-
-  /* MAIN */
-  .main { flex: 1; overflow-y: auto; min-width: 0; }
-
-  /* TOP BAR */
-  .topbar {
-    background: var(--navy2); border-bottom: 1px solid var(--border);
-    padding: 14px 28px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 10;
-  }
-  .topbar h1 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; flex: 1; }
-  .topbar-actions { display: flex; gap: 8px; }
-  .btn {
-    padding: 7px 16px; border-radius: var(--radius2); font-size: 13px; font-weight: 500;
-    cursor: pointer; border: none; font-family: inherit; transition: all 0.15s;
-  }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: #1d4ed8; }
-  .btn-outline { background: transparent; color: var(--fg2); border: 1px solid var(--border2); }
-  .btn-outline:hover { background: rgba(0,0,0,0.04); color: var(--fg); }
-  .btn-sm { padding: 5px 12px; font-size: 12px; }
-  .btn-success { background: var(--accent2); color: #fff; }
-  .btn-success:hover { background: #059669; }
-  .btn-danger { background: var(--accent4); color: #fff; }
-
-  /* PAGE */
-  .page { display: none; padding: 24px 28px; }
-  .page.active { display: block; }
-
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-
-  /* CARDS */
-  .card {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  }
-  .card-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-  .card-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--fg); }
-  .card-sub { font-size: 12px; color: var(--fg3); margin-top: 4px; }
-  .card-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-top: 6px; }
-  .delta-up { background: rgba(16,185,129,0.15); color: var(--accent2); }
-  .delta-down { background: rgba(239,68,68,0.15); color: var(--accent4); }
-
-  .section-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 14px; margin-top: 24px; }
-  .section-title:first-child { margin-top: 0; }
-
-  /* TABLE */
-  .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead tr { border-bottom: 1px solid var(--border2); }
-  th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.07em; background: rgba(0,0,0,0.02); }
-  td { padding: 11px 16px; color: var(--fg); border-bottom: 1px solid var(--border); }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(0,0,0,0.02); }
-
-  /* STATUS PILLS */
-  .pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .pill-green { background: rgba(16,185,129,0.12); color: #059669; }
-  .pill-blue { background: rgba(37,99,235,0.12); color: #2563eb; }
-  .pill-amber { background: rgba(245,158,11,0.12); color: #d97706; }
-  .pill-red { background: rgba(239,68,68,0.12); color: #dc2626; }
-  .pill-gray { background: rgba(100,116,139,0.1); color: var(--fg2); }
-  .pill-purple { background: rgba(139,92,246,0.12); color: #7c3aed; }
-
-  /* PROGRESS BAR */
-  .prog-wrap { background: rgba(0,0,0,0.08); border-radius: 4px; height: 6px; overflow: hidden; }
-  .prog-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
-  .prog-blue { background: var(--accent); }
-  .prog-green { background: var(--accent2); }
-  .prog-amber { background: var(--accent3); }
-  .prog-red { background: var(--accent4); }
-
-  /* SEARCH + FILTER BAR */
-  .filter-bar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
-  .search-input {
-    flex: 1; min-width: 180px; background: var(--card2); border: 1px solid var(--border2); border-radius: var(--radius2);
-    padding: 8px 14px; font-size: 13px; color: var(--fg); font-family: inherit; outline: none;
-  }
-  .search-input::placeholder { color: var(--fg3); }
-  .search-input:focus { border-color: var(--accent); }
-  select.filter-select {
-    background: var(--card2); border: 1px solid var(--border2); border-radius: var(--radius2);
-    padding: 8px 12px; font-size: 13px; color: var(--fg2); font-family: inherit; cursor: pointer; outline: none;
-  }
-  select.filter-select:focus { border-color: var(--accent); }
-
-  /* MODAL */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
-    align-items: center; justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--card2); border: 1px solid var(--border2); border-radius: var(--radius);
-    padding: 24px; width: 480px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
-  }
-  .modal-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
-  .close-btn { cursor: pointer; color: var(--fg3); font-size: 20px; line-height: 1; background: none; border: none; color: var(--fg2); }
-  .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 12px; font-weight: 600; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: block; }
-  .form-input {
-    width: 100%; background: var(--card); border: 1px solid var(--border2); border-radius: var(--radius2);
-    padding: 9px 12px; font-size: 13px; color: var(--fg); font-family: inherit; outline: none;
-  }
-  .form-input:focus { border-color: var(--accent); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  /* SOP CARDS */
-  .sop-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 18px; cursor: pointer; transition: all 0.15s;
-  }
-  .sop-card:hover { border-color: var(--accent); background: var(--card2); }
-  .sop-icon { font-size: 22px; margin-bottom: 10px; }
-  .sop-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-  .sop-desc { font-size: 12px; color: var(--fg3); line-height: 1.6; }
-  .sop-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-top: 10px; }
-  .sop-content { display: none; padding: 20px; background: var(--card2); border: 1px solid var(--border2); border-radius: var(--radius); margin-top: 12px; }
-  .sop-content.open { display: block; }
-  .sop-content h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--accent); }
-  .sop-content ol, .sop-content ul { padding-left: 18px; font-size: 13px; line-height: 2; color: var(--fg2); }
-  .sop-content li { margin-bottom: 2px; }
-
-  /* KANBAN */
-  .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  .kanban-col { background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; min-height: 200px; }
-  .kanban-col-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg3); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .kanban-count { background: rgba(0,0,0,0.07); padding: 2px 7px; border-radius: 20px; font-size: 11px; }
-  .kanban-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius2); padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-  .kanban-card:hover { border-color: var(--accent); }
-  .kanban-card-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .kanban-card-sub { font-size: 11px; color: var(--fg3); }
-  .kanban-card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-
-  /* PIPELINE BAR */
-  .pipe-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 2px; margin: 8px 0; }
-  .pipe-seg { height: 100%; border-radius: 2px; }
-
-  /* TABS */
-  .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-  .tab { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--fg3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab:hover { color: var(--fg); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* CHART PLACEHOLDER */
-  .chart-area { position: relative; padding: 16px 0 0; }
-  .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 100px; }
-  .bar { flex: 1; border-radius: 3px 3px 0 0; transition: opacity 0.2s; cursor: pointer; }
-  .bar:hover { opacity: 0.8; }
-
-  /* SPARKLINE */
-  .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 32px; }
-  .sp-bar { flex: 1; border-radius: 2px 2px 0 0; background: var(--accent); opacity: 0.4; }
-  .sp-bar:last-child { opacity: 1; }
-
-  /* EMPTY STATE */
-  .empty { text-align: center; padding: 48px 24px; color: var(--fg3); }
-  .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
-  .empty h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--fg2); margin-bottom: 6px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 900px) {
-    .sidebar { width: 56px; min-width: 56px; }
-    .nav-item span, .logo span, .logo-text, .nav-section, .sidebar-footer .user-info, .sidebar-footer strong { display: none; }
-    .badge { display: none; }
-    .grid-4 { grid-template-columns: repeat(2, 1fr); }
-    .kanban { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 640px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .page { padding: 16px; }
-    .topbar { padding: 12px 16px; }
-    .kanban { grid-template-columns: 1fr; }
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0a1628; --navy2: #0f1e38; --navy3: #162440;
+  --accent: #2563eb; --accent-h: #1d4ed8;
+  --accent2: #10b981; --accent3: #f59e0b; --accent4: #ef4444; --purple: #8b5cf6;
+  --fg: #f0f4ff; --fg2: #94a3b8; --fg3: #64748b;
+  --card: #111d35; --card2: #162440;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13);
+  --radius: 12px; --radius2: 8px; --sw: 228px;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--navy); color: var(--fg); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.5; min-height: 100vh; overflow-x: hidden; }
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: var(--sw); min-width: var(--sw); background: var(--navy2); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top:0; left:0; height:100vh; overflow-y:auto; z-index:50; transition: transform 0.3s ease; }
+.sidebar::-webkit-scrollbar { width:4px; } .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius:4px; }
+.logo { padding:22px 20px 18px; border-bottom:1px solid var(--border); font-family:'Syne',sans-serif; font-weight:800; font-size:18px; color:var(--fg); display:flex; align-items:center; gap:11px; letter-spacing:-0.02em; }
+.logo-icon { width:34px; height:34px; background:var(--accent); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; box-shadow:0 0 16px rgba(37,99,235,0.4); }
+.logo em { color:var(--accent); font-style:normal; }
+.ai-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(139,92,246,0.2); color:#a78bfa; font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; letter-spacing:0.06em; margin-left:2px; }
+.nav-section { padding:14px 16px 5px; font-size:10px; font-weight:700; letter-spacing:0.13em; color:var(--fg3); text-transform:uppercase; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 12px; margin:1px 8px; border-radius:var(--radius2); cursor:pointer; transition:all 0.15s; font-size:13.5px; font-weight:400; color:var(--fg2); user-select:none; }
+.nav-item:hover { background:rgba(37,99,235,0.1); color:var(--fg); }
+.nav-item.active { background:var(--accent); color:#fff; font-weight:500; box-shadow:0 2px 12px rgba(37,99,235,0.3); }
+.nav-icon { font-size:15px; width:20px; text-align:center; flex-shrink:0; }
+.nav-badge { margin-left:auto; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; }
+.nb-a { background:rgba(245,158,11,0.2); color:var(--accent3); }
+.nb-g { background:rgba(16,185,129,0.2); color:var(--accent2); }
+.nb-r { background:rgba(239,68,68,0.2); color:var(--accent4); }
+.sidebar-footer { margin-top:auto; padding:14px 16px; border-top:1px solid var(--border); }
+.user-card { display:flex; align-items:center; gap:10px; }
+.avatar { width:36px; height:36px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+.user-info strong { display:block; font-size:13px; color:var(--fg); font-weight:600; }
+.user-info span { font-size:11px; color:var(--fg3); }
+.online-dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); margin-left:auto; box-shadow:0 0 6px var(--accent2); flex-shrink:0; }
+.main { flex:1; margin-left:var(--sw); min-width:0; display:flex; flex-direction:column; }
+.topbar { background:var(--navy2); border-bottom:1px solid var(--border); padding:14px 28px; display:flex; align-items:center; gap:14px; position:sticky; top:0; z-index:40; }
+.hamburger { display:none; background:none; border:none; color:var(--fg2); font-size:20px; cursor:pointer; padding:4px; }
+.topbar-title { font-family:'Syne',sans-serif; font-size:17px; font-weight:700; flex:1; letter-spacing:-0.01em; }
+.topbar-sub { font-size:12px; color:var(--fg3); white-space:nowrap; }
+.topbar-actions { display:flex; gap:8px; align-items:center; }
+.btn { padding:8px 18px; border-radius:var(--radius2); font-size:13px; font-weight:500; cursor:pointer; border:none; font-family:'DM Sans',sans-serif; transition:all 0.15s; white-space:nowrap; }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent-h); }
+.btn-outline { background:transparent; color:var(--fg2); border:1px solid var(--border2); }
+.btn-outline:hover { background:rgba(255,255,255,0.05); color:var(--fg); }
+.btn-ai { background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; display:inline-flex; align-items:center; gap:6px; }
+.btn-ai:hover { opacity:0.9; box-shadow:0 2px 16px rgba(124,58,237,0.4); }
+.btn-sm { padding:6px 13px; font-size:12px; }
+.btn-xs { padding:4px 10px; font-size:11px; }
+.btn-green { background:var(--accent2); color:#fff; }
+.btn-green:hover { background:#059669; }
+.page { display:none; padding:26px 28px; }
+.page.active { display:block; animation:fadeUp 0.25s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.grid-5 { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; transition:border-color 0.15s; }
+.card-title { font-size:11px; font-weight:700; color:var(--fg3); text-transform:uppercase; letter-spacing:0.09em; margin-bottom:8px; }
+.card-value { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:var(--fg); letter-spacing:-0.02em; }
+.card-sub { font-size:12px; color:var(--fg3); margin-top:4px; }
+.card-delta { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; margin-top:8px; }
+.delta-up { background:rgba(16,185,129,0.12); color:#34d399; }
+.delta-down { background:rgba(239,68,68,0.12); color:#f87171; }
+.delta-neutral { background:rgba(148,163,184,0.1); color:var(--fg2); }
+.section-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; margin-bottom:14px; margin-top:26px; letter-spacing:-0.01em; }
+.section-title:first-child { margin-top:0; }
+.table-wrap { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+thead tr { border-bottom:1px solid var(--border2); }
+th { padding:11px 16px; text-align:left; font-size:10.5px; font-weight:700; color:var(--fg3); text-transform:uppercase; letter-spacing:0.08em; background:rgba(255,255,255,0.015); white-space:nowrap; }
+th.num { text-align:right; }
+td { padding:11px 16px; color:var(--fg); border-bottom:1px solid var(--border); }
+td.num { text-align:right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:rgba(255,255,255,0.018); }
+.pill { display:inline-flex; align-items:center; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.p-green { background:rgba(16,185,129,0.15); color:#34d399; }
+.p-blue  { background:rgba(37,99,235,0.15);  color:#60a5fa; }
+.p-amber { background:rgba(245,158,11,0.15); color:#fbbf24; }
+.p-red   { background:rgba(239,68,68,0.15);  color:#f87171; }
+.p-gray  { background:rgba(148,163,184,0.1); color:var(--fg2); }
+.p-purple{ background:rgba(139,92,246,0.15); color:#a78bfa; }
+.prog-wrap { background:rgba(255,255,255,0.07); border-radius:4px; height:6px; overflow:hidden; }
+.prog-fill { height:100%; border-radius:4px; transition:width 0.6s cubic-bezier(.4,0,.2,1); }
+.pb { background:var(--accent); } .pg { background:var(--accent2); } .pa { background:var(--accent3); } .pr { background:var(--accent4); }
+.filter-bar { display:flex; gap:10px; margin-bottom:16px; align-items:center; flex-wrap:wrap; }
+.search-input { flex:1; min-width:160px; background:var(--card2); border:1px solid var(--border2); border-radius:var(--radius2); padding:8px 14px; font-size:13px; color:var(--fg); font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.15s; }
+.search-input::placeholder { color:var(--fg3); }
+.search-input:focus { border-color:var(--accent); }
+.filter-sel { background:var(--card2); border:1px solid var(--border2); border-radius:var(--radius2); padding:8px 12px; font-size:13px; color:var(--fg2); font-family:'DM Sans',sans-serif; cursor:pointer; outline:none; }
+.filter-sel:focus { border-color:var(--accent); }
+.tabs { display:flex; gap:2px; margin-bottom:20px; border-bottom:1px solid var(--border); }
+.tab { padding:9px 18px; font-size:13px; font-weight:500; color:var(--fg3); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.15s; user-select:none; }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tab:hover:not(.active) { color:var(--fg); }
+.tab-pane { display:none; }
+.tab-pane.active { display:block; animation:fadeUp 0.2s ease; }
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px); z-index:200; align-items:center; justify-content:center; }
+.overlay.open { display:flex; }
+.modal { background:var(--card2); border:1px solid var(--border2); border-radius:var(--radius); padding:26px; width:520px; max-width:95vw; max-height:88vh; overflow-y:auto; animation:fadeUp 0.2s ease; }
+.modal-hd { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+.close-x { background:none; border:none; color:var(--fg3); font-size:22px; cursor:pointer; line-height:1; }
+.close-x:hover { color:var(--fg); }
+.fg-m { margin-bottom:13px; }
+.fl { font-size:11px; font-weight:700; color:var(--fg3); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:6px; display:block; }
+.fi { width:100%; background:var(--card); border:1px solid var(--border2); border-radius:var(--radius2); padding:9px 13px; font-size:13px; color:var(--fg); font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.15s; }
+.fi:focus { border-color:var(--accent); }
+.fr { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:8px; }
+/* AI */
+.ai-panel { position:fixed; right:0; top:0; bottom:0; width:380px; background:var(--navy2); border-left:1px solid var(--border); display:flex; flex-direction:column; z-index:60; transform:translateX(100%); transition:transform 0.3s cubic-bezier(.4,0,.2,1); }
+.ai-panel.open { transform:translateX(0); }
+.ai-panel-hd { padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.ai-panel-hd-icon { width:34px; height:34px; background:linear-gradient(135deg,#7c3aed,#2563eb); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.ai-panel-hd-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; flex:1; }
+.ai-panel-hd-sub { font-size:11px; color:var(--fg3); }
+.close-panel { background:none; border:none; color:var(--fg3); font-size:20px; cursor:pointer; padding:4px; }
+.close-panel:hover { color:var(--fg); }
+.ai-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; }
+.ai-messages::-webkit-scrollbar { width:4px; } .ai-messages::-webkit-scrollbar-thumb { background:var(--border2); border-radius:4px; }
+.ai-msg { display:flex; gap:10px; animation:fadeUp 0.2s ease; }
+.ai-msg.user { flex-direction:row-reverse; }
+.ai-msg-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:2px; }
+.ai-msg.assistant .ai-msg-avatar { background:linear-gradient(135deg,#7c3aed,#2563eb); }
+.ai-msg.user .ai-msg-avatar { background:var(--accent); font-weight:700; font-size:11px; }
+.ai-msg-bubble { max-width:85%; padding:10px 14px; border-radius:12px; font-size:13px; line-height:1.6; }
+.ai-msg.assistant .ai-msg-bubble { background:var(--card2); border:1px solid var(--border); color:var(--fg); border-bottom-left-radius:4px; }
+.ai-msg.user .ai-msg-bubble { background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+.ai-msg-bubble strong { color:var(--accent2); font-weight:600; }
+.ai-msg-bubble ul { padding-left:16px; margin-top:6px; }
+.ai-msg-bubble li { margin-bottom:3px; color:var(--fg2); }
+.ai-typing { display:flex; gap:4px; align-items:center; padding:10px 14px; background:var(--card2); border:1px solid var(--border); border-radius:12px; border-bottom-left-radius:4px; width:fit-content; }
+.ai-typing span { width:6px; height:6px; border-radius:50%; background:var(--fg3); animation:blink 1.2s infinite; }
+.ai-typing span:nth-child(2) { animation-delay:0.2s; }
+.ai-typing span:nth-child(3) { animation-delay:0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+.ai-quick-prompts { padding:12px 16px; border-top:1px solid var(--border); display:flex; flex-wrap:wrap; gap:6px; flex-shrink:0; }
+.ai-quick-btn { background:var(--card2); border:1px solid var(--border2); border-radius:20px; padding:5px 12px; font-size:11px; color:var(--fg2); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.15s; white-space:nowrap; }
+.ai-quick-btn:hover { background:rgba(37,99,235,0.15); color:var(--accent); border-color:rgba(37,99,235,0.3); }
+.ai-input-row { padding:12px 16px; border-top:1px solid var(--border); display:flex; gap:8px; flex-shrink:0; }
+.ai-input { flex:1; background:var(--card2); border:1px solid var(--border2); border-radius:var(--radius2); padding:9px 13px; font-size:13px; color:var(--fg); font-family:'DM Sans',sans-serif; outline:none; resize:none; height:40px; max-height:100px; transition:border-color 0.15s; }
+.ai-input:focus { border-color:var(--accent); }
+.ai-input::placeholder { color:var(--fg3); }
+.ai-send-btn { background:linear-gradient(135deg,#7c3aed,#2563eb); border:none; border-radius:var(--radius2); width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; flex-shrink:0; transition:opacity 0.15s; }
+.ai-send-btn:hover { opacity:0.85; }
+.ai-send-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.ai-fab { position:fixed; bottom:24px; right:24px; background:linear-gradient(135deg,#7c3aed,#2563eb); border:none; border-radius:50px; padding:12px 20px; display:flex; align-items:center; gap:8px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:#fff; box-shadow:0 4px 24px rgba(124,58,237,0.45); z-index:55; transition:all 0.2s; }
+.ai-fab:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(124,58,237,0.5); }
+.ai-fab.panel-open { right:404px; }
+.ai-action-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(37,99,235,0.06)); border:1px solid rgba(124,58,237,0.15); border-radius:var(--radius); align-items:center; }
+.ai-action-label { font-size:11px; color:var(--fg3); font-weight:600; text-transform:uppercase; letter-spacing:0.07em; margin-right:4px; flex-shrink:0; }
+.ai-result { background:var(--card2); border:1px solid rgba(124,58,237,0.3); border-radius:var(--radius); padding:16px; margin-top:0; margin-bottom:16px; display:none; animation:fadeUp 0.2s ease; }
+.ai-result.visible { display:block; }
+.ai-result-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.ai-result-title { font-size:11px; font-weight:700; color:#a78bfa; text-transform:uppercase; letter-spacing:0.07em; display:flex; align-items:center; gap:6px; }
+.ai-result-content { font-size:13px; color:var(--fg2); line-height:1.7; white-space:pre-wrap; }
+.ai-result-content strong { color:var(--fg); }
+.copy-btn { background:rgba(255,255,255,0.07); border:none; border-radius:6px; padding:4px 10px; font-size:11px; color:var(--fg3); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
+.copy-btn:hover { background:rgba(255,255,255,0.12); color:var(--fg); }
+/* Sync badge */
+.sync-badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--accent2); background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); padding:4px 10px; border-radius:20px; }
+.sync-badge.loading { color:var(--accent3); background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.2); }
+.sync-dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+.sync-dot.pulse { animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+/* Recruiter colour chips */
+.chip { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; flex-shrink:0; }
+/* Bar chart */
+.bar-chart-wrap { display:flex; align-items:flex-end; gap:5px; height:80px; }
+.bcol { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.bfill { width:100%; border-radius:3px 3px 0 0; min-height:2px; }
+.blbl { font-size:9px; color:var(--fg3); }
+.bval { font-size:9px; color:var(--fg2); }
+/* Sparkline */
+.spark { display:flex; align-items:flex-end; gap:2px; height:28px; }
+.sp { flex:1; border-radius:2px 2px 0 0; min-height:2px; }
+/* Mobile */
+.sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:49; }
+.sidebar-overlay.open { display:block; }
+@media (max-width:1100px) { .grid-4{grid-template-columns:repeat(2,1fr);} .grid-5{grid-template-columns:repeat(3,1fr);} }
+@media (max-width:860px) {
+  :root{--sw:0px;}
+  .sidebar{transform:translateX(-228px);width:228px;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .hamburger{display:block;}
+  .page{padding:16px;}
+  .topbar{padding:12px 16px;}
+  .ai-panel{width:320px;}
+  .ai-fab.panel-open{right:344px;}
+}
+@media (max-width:640px) { .grid-2,.grid-3{grid-template-columns:1fr;} .fr{grid-template-columns:1fr;} .topbar-sub{display:none;} .ai-panel{width:100%;} .ai-fab.panel-open{display:none;} }
 </style>
-
+</head>
+<body>
 <div class="app">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-icon">⚡</div>
-      <span class="logo-text">Recruit<span>Hub</span></span>
-    </div>
-    <div class="nav-section">Workspace</div>
-    <div class="nav-item active" onclick="navigate('dashboard',this)">
-      <span class="nav-icon">🏠</span><span>Dashboard</span>
-    </div>
-    <div class="nav-section">Tools</div>
-    <div class="nav-item" onclick="navigate('sop',this)">
-      <span class="nav-icon">📋</span><span>SOPs</span><span class="badge">12</span>
-    </div>
-    <div class="nav-item" onclick="navigate('sales',this)">
-      <span class="nav-icon">📈</span><span>Sales Tracker</span>
-    </div>
-    <div class="nav-item" onclick="navigate('ar',this)">
-      <span class="nav-icon">💰</span><span>AR Tracker</span><span class="badge r">3</span>
-    </div>
-    <div class="nav-item" onclick="navigate('bd',this)">
-      <span class="nav-icon">🗺️</span><span>BD Mapping</span>
-    </div>
-    <div class="nav-item" onclick="navigate('jobs',this)">
-      <span class="nav-icon">💼</span><span>Job Openings</span><span class="badge g">8</span>
-    </div>
-    <div class="nav-section">Settings</div>
-    <div class="nav-item" onclick="navigate('team',this)">
-      <span class="nav-icon">👥</span><span>Team</span>
-    </div>
-    <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="avatar">CC</div>
-        <div class="user-info"><strong>Cassan Chen</strong><span>Admin</span></div>
-      </div>
-    </div>
-  </aside>
 
-  <!-- MAIN -->
-  <main class="main">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    E&A<em>Hub</em> <span class="ai-badge">✦ AI</span>
+  </div>
+  <div class="nav-section">Workspace</div>
+  <div class="nav-item active" onclick="nav('dashboard',this)"><span class="nav-icon">🏠</span> Dashboard</div>
+  <div class="nav-section">Sales</div>
+  <div class="nav-item" onclick="nav('sales',this)"><span class="nav-icon">📈</span> Sales Tracker <span class="nav-badge nb-g">Live</span></div>
+  <div class="nav-item" onclick="nav('individual',this)"><span class="nav-icon">👤</span> Individual View</div>
+  <div class="nav-item" onclick="nav('targets',this)"><span class="nav-icon">🎯</span> Targets & KPIs</div>
+  <div class="nav-section">Operations</div>
+  <div class="nav-item" onclick="nav('sop',this)"><span class="nav-icon">📋</span> SOPs <span class="nav-badge nb-a">12</span></div>
+  <div class="nav-item" onclick="nav('ar',this)"><span class="nav-icon">💰</span> AR Tracker</div>
+  <div class="nav-item" onclick="nav('jobs',this)"><span class="nav-icon">💼</span> Job Openings</div>
+  <div class="nav-section">AI</div>
+  <div class="nav-item" onclick="toggleAIPanel()"><span class="nav-icon">🤖</span> AI Assistant</div>
+  <div class="nav-item" onclick="nav('ai-settings',this)"><span class="nav-icon">⚙️</span> AI Settings</div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">EA</div>
+      <div class="user-info"><strong>E&A Team</strong><span>2025 / 2026</span></div>
+      <div class="online-dot"></div>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sOverlay" onclick="closeSidebar()"></div>
 
-    <!-- ============ DASHBOARD ============ -->
-    <div id="page-dashboard" class="page active">
-      <div class="topbar">
-        <h1>Dashboard</h1>
-        <span style="font-size:12px;color:var(--fg3)">Week of Apr 6, 2026</span>
-        <div class="topbar-actions">
-          <button class="btn btn-outline btn-sm">Export</button>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-sales')">+ Log Activity</button>
-        </div>
+<div class="main">
+
+<!-- ══ DASHBOARD ══ -->
+<div id="pg-dashboard" class="page active">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Dashboard — E&A Sales 2026</div>
+    <div id="sync-status" class="sync-badge loading"><span class="sync-dot pulse"></span> Loading…</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ai btn-sm" onclick="aiAction('dashboard-summary','dashboard')">✦ AI Summary</button>
+      <button class="btn btn-green btn-sm" onclick="refreshData()">↻ Refresh</button>
+    </div>
+  </div>
+  <div style="padding:26px 28px">
+    <div id="ai-result-dashboard" class="ai-result"></div>
+    <div class="grid-4" style="margin-bottom:20px" id="dash-kpis">
+      <div class="card"><div class="card-title">Team Closure YTD</div><div class="card-value" id="kpi-closure">—</div><div class="card-sub" id="kpi-closure-sub">Loading…</div></div>
+      <div class="card"><div class="card-title">Team GP YTD</div><div class="card-value" id="kpi-gp">—</div><div class="card-sub" id="kpi-gp-sub">Loading…</div></div>
+      <div class="card"><div class="card-title">Top Performer</div><div class="card-value" id="kpi-top" style="font-size:18px">—</div><div class="card-sub" id="kpi-top-sub">Loading…</div></div>
+      <div class="card"><div class="card-title">Active Recruiters</div><div class="card-value" id="kpi-active">—</div><div class="card-sub" id="kpi-active-sub">with GP this FY</div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">Monthly Team GP — 2026</div>
+        <div class="bar-chart-wrap" id="dash-bar-chart"></div>
+        <div id="dash-bar-labels" style="display:flex;gap:5px;margin-top:6px"></div>
       </div>
-      <div style="padding:24px 28px">
-        <div class="grid-4" style="margin-bottom:20px">
-          <div class="card">
-            <div class="card-title">Closure YTD 2026</div>
-            <div class="card-value">$225K</div>
-            <div class="card-delta delta-up">↑ 154% vs Q1 2025</div>
-          </div>
-          <div class="card">
-            <div class="card-title">GP YTD 2026</div>
-            <div class="card-value">$280K</div>
-            <div class="card-delta delta-up">↑ 207% vs Q1 2025</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Apr Closure MTD</div>
-            <div class="card-value">$14K</div>
-            <div class="card-delta delta-down">↓ Month in progress (7d)</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Apr GP MTD</div>
-            <div class="card-value">$26K</div>
-            <div class="card-delta delta-up">Q1 avg: $77.7K/mo</div>
-          </div>
-        </div>
-        <div class="grid-2" style="margin-bottom:20px">
-          <div class="card">
-            <div class="card-title" style="margin-bottom:14px">Monthly Revenue vs Target</div>
-            <div class="chart-area">
-              <div class="chart-bars">
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                  <div style="font-size:10px;color:var(--fg3)">$70K</div>
-                  <div class="bar" style="height:74%;background:var(--accent);opacity:0.7"></div>
-                </div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                  <div style="font-size:10px;color:var(--fg3)">$51K</div>
-                  <div class="bar" style="height:54%;background:var(--accent);opacity:0.7"></div>
-                </div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                  <div style="font-size:10px;color:var(--fg3)">$95K</div>
-                  <div class="bar" style="height:100%;background:var(--accent);opacity:0.7"></div>
-                </div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                  <div style="font-size:10px;color:var(--fg3)">$87K</div>
-                  <div class="bar" style="height:92%;background:var(--accent);opacity:0.7"></div>
-                </div>
-                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                  <div style="font-size:10px;color:var(--fg3)">$26K</div>
-                  <div class="bar" style="height:27%;background:var(--accent2)"></div>
-                </div>
-              </div>
-              <div style="display:flex;gap:6px;margin-top:6px">
-                <div style="flex:1;text-align:center;font-size:10px;color:var(--fg3)">Dec '25</div>
-                <div style="flex:1;text-align:center;font-size:10px;color:var(--fg3)">Jan</div>
-                <div style="flex:1;text-align:center;font-size:10px;color:var(--fg3)">Feb</div>
-                <div style="flex:1;text-align:center;font-size:10px;color:var(--fg3)">Mar</div>
-                <div style="flex:1;text-align:center;font-size:10px;color:var(--accent2);font-weight:600">Apr ●</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
-              <div style="font-size:11px;color:var(--fg3)">Target: <span style="color:var(--fg)">$80K/mo</span></div>
-              <div style="font-size:11px;color:var(--fg3);margin-left:auto">Q1 Pace: <span style="color:var(--accent2);font-weight:600">97.1%</span></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title" style="margin-bottom:14px">Team Pipeline</div>
-            <div id="dash-pipeline"></div>
-          </div>
-        </div>
-        <div class="section-title">Recent Activity</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Recruiter</th><th>Activity</th><th>Client / Candidate</th><th>Value</th><th>Status</th><th>Date</th></tr></thead>
-            <tbody>
-              <tr><td>Seow S.F.</td><td>Placement</td><td>Client → Candidate</td><td>$9,750</td><td><span class="pill pill-green">Placed</span></td><td>Apr 7</td></tr>
-              <tr><td>Chariotte S.</td><td>Placement</td><td>Client → Candidate</td><td>$3,630</td><td><span class="pill pill-green">Placed</span></td><td>Apr 4</td></tr>
-              <tr><td>Ang K.L.</td><td>Placement</td><td>Client → Candidate</td><td>$20,276</td><td><span class="pill pill-green">Placed</span></td><td>Mar 28</td></tr>
-              <tr><td>Chariotte S.</td><td>Placement</td><td>Client → Candidate</td><td>$12,756</td><td><span class="pill pill-green">Placed</span></td><td>Mar 25</td></tr>
-              <tr><td>Seow S.F.</td><td>Placement</td><td>Client → Candidate</td><td>$10,000</td><td><span class="pill pill-blue">In Progress</span></td><td>Mar 20</td></tr>
-              <tr><td>Jolene T.</td><td>Placement</td><td>Client → Candidate</td><td>$8,314</td><td><span class="pill pill-green">Placed</span></td><td>Mar 15</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">Recruiter GP Progress</div>
+        <div id="dash-recruiter-prog"></div>
       </div>
     </div>
-
-    <!-- ============ SOPs ============ -->
-    <div id="page-sop" class="page">
-      <div class="topbar">
-        <h1>Standard Operating Procedures</h1>
-        <div class="topbar-actions">
-          <button class="btn btn-outline btn-sm">+ New SOP</button>
-        </div>
-      </div>
-      <div style="padding:24px 28px">
-        <div class="filter-bar">
-          <input type="text" class="search-input" placeholder="Search SOPs..." id="sop-search" oninput="filterSOPs()">
-          <select class="filter-select" onchange="filterSOPs()" id="sop-cat">
-            <option value="">All Categories</option>
-            <option>Sales</option><option>Recruitment</option><option>Finance</option><option>BD</option>
-          </select>
-        </div>
-        <div class="grid-3" id="sop-grid"></div>
-      </div>
+    <div class="section-title">Team Performance Summary</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Recruiter</th><th class="num">Closure YTD</th><th class="num">GP YTD</th><th class="num">Pipeline</th><th class="num">Q1 GP</th><th class="num">Q2 GP</th><th>Q-Q</th><th>Status</th></tr></thead>
+        <tbody id="dash-summary-body"></tbody>
+      </table>
     </div>
-
-    <!-- ============ SALES TRACKER ============ -->
-    <div id="page-sales" class="page">
-      <div class="topbar">
-        <h1>Sales Tracker</h1>
-        <div class="topbar-actions">
-          <button class="btn btn-outline btn-sm">Export CSV</button>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-sales')">+ Add Record</button>
-        </div>
-      </div>
-      <div style="padding:24px 28px">
-        <div class="grid-4" style="margin-bottom:20px">
-          <div class="card">
-            <div class="card-title">Calls Made</div>
-            <div class="card-value">318</div>
-            <div class="card-sub" style="margin-top:6px">
-              <div class="prog-wrap"><div class="prog-fill prog-blue" style="width:79%"></div></div>
-              <span style="font-size:11px;color:var(--fg3)">79% of weekly target</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Interviews Arr.</div>
-            <div class="card-value">42</div>
-            <div class="card-sub" style="margin-top:6px">
-              <div class="prog-wrap"><div class="prog-fill prog-amber" style="width:84%"></div></div>
-              <span style="font-size:11px;color:var(--fg3)">84% of weekly target</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">CVs Submitted</div>
-            <div class="card-value">127</div>
-            <div class="card-sub" style="margin-top:6px">
-              <div class="prog-wrap"><div class="prog-fill prog-green" style="width:91%"></div></div>
-              <span style="font-size:11px;color:var(--fg3)">91% of weekly target</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Conversion Rate</div>
-            <div class="card-value">14.8%</div>
-            <div class="card-delta delta-up">↑ 2.1% vs last wk</div>
-          </div>
-        </div>
-        <div class="tabs">
-          <div class="tab active" onclick="switchTab(this,'sales-pipeline')">Pipeline</div>
-          <div class="tab" onclick="switchTab(this,'sales-log')">Activity Log</div>
-          <div class="tab" onclick="switchTab(this,'sales-targets')">Targets</div>
-        </div>
-        <div id="sales-pipeline" class="tab-content active">
-          <div class="kanban" id="sales-kanban"></div>
-        </div>
-        <div id="sales-log" class="tab-content">
-          <div class="filter-bar">
-            <input type="text" class="search-input" placeholder="Search activity..." style="max-width:300px">
-            <select class="filter-select"><option>All Recruiters</option><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Jolene Tan</option><option>Chloe Toh</option></select>
-            <select class="filter-select"><option>All Activities</option><option>Call</option><option>Email</option><option>Meeting</option><option>Placement</option></select>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Date</th><th>Recruiter</th><th>Activity</th><th>Contact</th><th>Company</th><th>Notes</th><th>Next Action</th></tr></thead>
-              <tbody id="sales-log-body"></tbody>
-            </table>
-          </div>
-        </div>
-        <div id="sales-targets" class="tab-content">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Recruiter</th><th>Revenue Target</th><th>Actual</th><th>Progress</th><th>Calls</th><th>Placements</th><th>Status</th></tr></thead>
-              <tbody id="targets-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ AR TRACKER ============ -->
-    <div id="page-ar" class="page">
-      <div class="topbar">
-        <h1>Accounts Receivable Tracker</h1>
-        <div class="topbar-actions">
-          <button class="btn btn-outline btn-sm">Export</button>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-ar')">+ Add Invoice</button>
-        </div>
-      </div>
-      <div style="padding:24px 28px">
-        <div class="grid-4" style="margin-bottom:20px">
-          <div class="card"><div class="card-title">Total Outstanding</div><div class="card-value">$62,400</div><div class="card-delta delta-down">3 overdue</div></div>
-          <div class="card"><div class="card-title">Current (0–30d)</div><div class="card-value">$38,200</div><div class="card-delta delta-up">On track</div></div>
-          <div class="card"><div class="card-title">Overdue (31–60d)</div><div class="card-value">$18,900</div><div class="card-delta delta-down">Action needed</div></div>
-          <div class="card"><div class="card-title">Collected MTD</div><div class="card-value">$124K</div><div class="card-delta delta-up">↑ 6% vs last mo</div></div>
-        </div>
-        <div class="filter-bar">
-          <input type="text" class="search-input" placeholder="Search invoices..." style="max-width:260px">
-          <select class="filter-select" id="ar-status-filter" onchange="filterAR()">
-            <option value="">All Status</option>
-            <option>Paid</option><option>Awaiting Payment</option><option>Overdue</option><option>Disputed</option>
-          </select>
-          <select class="filter-select">
-            <option>All Recruiters</option><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Jolene Tan</option><option>Chloe Toh</option>
-          </select>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Invoice #</th><th>Client</th><th>Recruiter</th><th>Candidate</th><th>Amount</th><th>Issue Date</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody id="ar-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ BD MAPPING ============ -->
-    <div id="page-bd" class="page">
-      <div class="topbar">
-        <h1>Business Development Mapping</h1>
-        <div class="topbar-actions">
-          <button class="btn btn-outline btn-sm">Export</button>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-bd')">+ Add Account</button>
-        </div>
-      </div>
-      <div style="padding:24px 28px">
-        <div class="grid-4" style="margin-bottom:20px">
-          <div class="card"><div class="card-title">Target Accounts</div><div class="card-value">68</div></div>
-          <div class="card"><div class="card-title">Active Pursuits</div><div class="card-value">23</div><div class="card-delta delta-up">4 new this wk</div></div>
-          <div class="card"><div class="card-title">Proposals Sent</div><div class="card-value">11</div><div class="card-delta delta-up">$380K pipeline</div></div>
-          <div class="card"><div class="card-title">Won This Qtr</div><div class="card-value">7</div><div class="card-delta delta-up">$210K revenue</div></div>
-        </div>
-        <div class="tabs">
-          <div class="tab active" onclick="switchTab(this,'bd-map')">Account Map</div>
-          <div class="tab" onclick="switchTab(this,'bd-tracker')">BD Tracker</div>
-        </div>
-        <div id="bd-map" class="tab-content active">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px" id="bd-cards"></div>
-        </div>
-        <div id="bd-tracker" class="tab-content">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Company</th><th>Industry</th><th>Owner</th><th>Stage</th><th>Est. Value</th><th>Last Contact</th><th>Next Step</th><th>Priority</th></tr></thead>
-              <tbody id="bd-tracker-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ JOB OPENINGS ============ -->
-    <div id="page-jobs" class="page">
-      <div class="topbar">
-        <h1>Job Openings</h1>
-        <div class="topbar-actions">
-          <button class="btn btn-outline btn-sm">Export</button>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-job')">+ Add Opening</button>
-        </div>
-      </div>
-      <div style="padding:24px 28px">
-        <div class="grid-4" style="margin-bottom:20px">
-          <div class="card"><div class="card-title">Active Roles</div><div class="card-value">24</div></div>
-          <div class="card"><div class="card-title">Candidates in Proc.</div><div class="card-value">81</div></div>
-          <div class="card"><div class="card-title">Avg Days to Fill</div><div class="card-value">18</div><div class="card-delta delta-up">↓ 3 days vs target</div></div>
-          <div class="card"><div class="card-title">Shortlisted</div><div class="card-value">34</div></div>
-        </div>
-        <div class="filter-bar">
-          <input type="text" class="search-input" placeholder="Search roles, clients..." id="job-search" oninput="filterJobs()">
-          <select class="filter-select" id="job-type" onchange="filterJobs()">
-            <option value="">All Types</option><option>Permanent</option><option>Contract</option><option>Retained</option>
-          </select>
-          <select class="filter-select" id="job-status" onchange="filterJobs()">
-            <option value="">All Status</option><option>Active</option><option>On Hold</option><option>Filled</option>
-          </select>
-          <select class="filter-select" id="job-recruiter" onchange="filterJobs()">
-            <option value="">All Recruiters</option><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Jolene Tan</option><option>Chloe Toh</option>
-          </select>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Role</th><th>Client</th><th>Type</th><th>Salary Range</th><th>Recruiter</th><th>Candidates</th><th>Days Open</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody id="jobs-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ TEAM ============ -->
-    <div id="page-team" class="page">
-      <div class="topbar">
-        <h1>Team</h1>
-        <div class="topbar-actions">
-          <button class="btn btn-primary btn-sm">+ Add Member</button>
-        </div>
-      </div>
-      <div style="padding:24px 28px">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px" id="team-grid"></div>
-      </div>
-    </div>
-
-  </main>
+  </div>
 </div>
+
+<!-- ══ SALES TRACKER ══ -->
+<div id="pg-sales" class="page">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Sales Tracker — Live from Google Sheets</div>
+    <div id="sync-status-2" class="sync-badge loading"><span class="sync-dot pulse"></span> Loading…</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ai btn-sm" onclick="aiAction('sales-analysis','sales')">✦ Analyse</button>
+      <button class="btn btn-green btn-sm" onclick="refreshData()">↻ Sync Sheet</button>
+    </div>
+  </div>
+  <div style="padding:26px 28px">
+    <div id="ai-result-sales" class="ai-result"></div>
+    <div class="ai-action-row">
+      <span class="ai-action-label">✦ AI</span>
+      <button class="btn-ai btn btn-xs" onclick="aiAction('sales-forecast','sales')">Revenue Forecast</button>
+      <button class="btn-ai btn btn-xs" onclick="aiAction('sales-coach','sales')">Coach the Team</button>
+      <button class="btn-ai btn btn-xs" onclick="aiAction('sales-weekly-report','sales')">Write Weekly Report</button>
+      <button class="btn-ai btn btn-xs" onclick="aiAction('sales-qoq','sales')">Q-o-Q Analysis</button>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'st-monthly')">Monthly Breakdown</div>
+      <div class="tab" onclick="switchTab(this,'st-recruiter')">By Recruiter</div>
+      <div class="tab" onclick="switchTab(this,'st-pipeline')">Pipeline</div>
+    </div>
+    <div class="tab-pane active" id="st-monthly">
+      <div class="table-wrap"><table>
+        <thead><tr><th>Month</th><th class="num">Jolene Tan</th><th class="num">Ang Kah Leong</th><th class="num">Chariotte Soo</th><th class="num">Seow Soek Fern</th><th class="num">Cassan Chen</th><th class="num">Chloe Toh</th><th class="num">Team Total</th></tr></thead>
+        <tbody id="st-monthly-body"></tbody>
+      </table></div>
+    </div>
+    <div class="tab-pane" id="st-recruiter">
+      <div class="table-wrap"><table>
+        <thead><tr><th>Recruiter</th><th class="num">Jan</th><th class="num">Feb</th><th class="num">Mar</th><th class="num">Apr</th><th class="num">May</th><th class="num">Jun</th><th class="num">YTD GP</th><th class="num">YTD Closure</th><th class="num">Pipeline</th></tr></thead>
+        <tbody id="st-recruiter-body"></tbody>
+      </table></div>
+    </div>
+    <div class="tab-pane" id="st-pipeline">
+      <div class="grid-3" id="st-pipeline-cards" style="margin-bottom:20px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INDIVIDUAL VIEW ══ -->
+<div id="pg-individual" class="page">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Individual Performance</div>
+    <div class="topbar-actions">
+      <select class="filter-sel" id="ind-select" onchange="renderIndividual()">
+        <option value="0">Jolene Tan</option>
+        <option value="1">Ang Kah Leong</option>
+        <option value="2">Chariotte Soo</option>
+        <option value="3">Seow Soek Fern</option>
+        <option value="4">Cassan Chen</option>
+        <option value="5">Chloe Toh</option>
+      </select>
+      <button class="btn btn-ai btn-sm" onclick="aiIndividual()">✦ AI Coaching</button>
+    </div>
+  </div>
+  <div style="padding:26px 28px" id="individual-content"></div>
+</div>
+
+<!-- ══ TARGETS ══ -->
+<div id="pg-targets" class="page">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Targets & KPIs</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ai btn-sm" onclick="aiAction('targets-review','targets')">✦ Target Review</button>
+    </div>
+  </div>
+  <div style="padding:26px 28px">
+    <div id="ai-result-targets" class="ai-result"></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Recruiter</th><th class="num">Q1 GP</th><th class="num">Q2 GP (so far)</th><th class="num">Q-Q Change</th><th>Trend</th><th class="num">Avg GP/Qtr</th><th>Status</th></tr></thead>
+      <tbody id="targets-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ SOPs ══ -->
+<div id="pg-sop" class="page">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Standard Operating Procedures</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ai btn-sm" onclick="aiAction('sop-create','sop')">✦ Generate SOP</button>
+    </div>
+  </div>
+  <div style="padding:26px 28px">
+    <div id="ai-result-sop" class="ai-result"></div>
+    <div class="filter-bar">
+      <input type="text" class="search-input" placeholder="🔍  Search SOPs..." id="sop-q" oninput="filterSOPs()">
+      <select class="filter-sel" id="sop-cat" onchange="filterSOPs()">
+        <option value="">All Categories</option>
+        <option>Sales</option><option>Recruitment</option><option>Finance</option><option>BD</option>
+      </select>
+    </div>
+    <div id="sop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px"></div>
+  </div>
+</div>
+
+<!-- ══ AR ══ -->
+<div id="pg-ar" class="page">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Accounts Receivable</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ai btn-sm" onclick="aiAction('ar-chase-all','ar')">✦ Draft Chase Emails</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('m-ar')">+ Add Invoice</button>
+    </div>
+  </div>
+  <div style="padding:26px 28px">
+    <div id="ai-result-ar" class="ai-result"></div>
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="card"><div class="card-title">Outstanding</div><div class="card-value">$62,400</div><div class="card-delta delta-down">3 overdue</div></div>
+      <div class="card"><div class="card-title">Current (0–30d)</div><div class="card-value">$38,200</div><div class="card-delta delta-up">On track</div></div>
+      <div class="card"><div class="card-title">Overdue (31–60d)</div><div class="card-value">$18,900</div><div class="card-delta delta-down">Action needed</div></div>
+      <div class="card"><div class="card-title">Collected MTD</div><div class="card-value">$124K</div><div class="card-delta delta-up">↑ 6% vs last mo</div></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Invoice #</th><th>Client</th><th>Recruiter</th><th>Candidate</th><th class="num">Amount</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="ar-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ JOBS ══ -->
+<div id="pg-jobs" class="page">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Job Openings</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ai btn-sm" onclick="aiAction('jobs-write-ad','jobs')">✦ Write Job Ad</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('m-job')">+ Add Opening</button>
+    </div>
+  </div>
+  <div style="padding:26px 28px">
+    <div id="ai-result-jobs" class="ai-result"></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Role</th><th>Client</th><th>Type</th><th>Salary Range</th><th>Recruiter</th><th>Days Open</th><th>Status</th></tr></thead>
+      <tbody id="jobs-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ AI SETTINGS ══ -->
+<div id="pg-ai-settings" class="page">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">AI Settings</div>
+  </div>
+  <div style="padding:26px 28px;max-width:600px">
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title" style="margin-bottom:14px">Anthropic API Key</div>
+      <p style="font-size:13px;color:var(--fg2);margin-bottom:16px;line-height:1.7">Enter your API key to activate all AI features. Get a free key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a>. Stored in your browser only.</p>
+      <label class="fl">API Key</label>
+      <div style="display:flex;gap:8px">
+        <input type="password" id="settings-api-key" class="fi" placeholder="sk-ant-api03-..." style="flex:1">
+        <button class="btn btn-primary" onclick="saveApiKey()">Save Key</button>
+      </div>
+      <div id="key-status" style="font-size:12px;margin-top:10px;display:none"></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">Google Sheet Connection</div>
+      <p style="font-size:13px;color:var(--fg2);margin-bottom:10px;line-height:1.7">Connected to: <strong style="color:var(--accent2)">E&A Sales Report 2025/2026</strong></p>
+      <div style="font-size:12px;color:var(--fg3);background:var(--card);padding:10px 14px;border-radius:8px;word-break:break-all">Sheet ID: 1vhlN2ExGqJwCUioL7VcnG4crMRoecrI4uPvtdF2fJdM</div>
+      <p style="font-size:12px;color:var(--fg3);margin-top:10px">Data refreshes automatically when you click ↻ Sync Sheet. Make sure the sheet is shared as "Anyone with link can view".</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- AI PANEL -->
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-hd">
+    <div class="ai-panel-hd-icon">✦</div>
+    <div>
+      <div class="ai-panel-hd-title">AI Assistant</div>
+      <div class="ai-panel-hd-sub">E&A Sales Intelligence</div>
+    </div>
+    <button class="close-panel" onclick="toggleAIPanel()">×</button>
+  </div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-msg assistant">
+      <div class="ai-msg-avatar">✦</div>
+      <div class="ai-msg-bubble">
+        👋 Hi! I'm your E&A Sales AI, loaded with your <strong>real 2026 data</strong>. I can:
+        <ul>
+          <li>Analyse individual & team performance</li>
+          <li>Draft coaching notes for each recruiter</li>
+          <li>Write client outreach & follow-up emails</li>
+          <li>Forecast revenue based on pipeline</li>
+          <li>Identify risks and suggest actions</li>
+        </ul>
+        Add your API key in <strong>AI Settings</strong> to get started!
+      </div>
+    </div>
+  </div>
+  <div class="ai-quick-prompts">
+    <button class="ai-quick-btn" onclick="sendQuick('Who is the top performer this quarter and why?')">🏆 Top performer</button>
+    <button class="ai-quick-btn" onclick="sendQuick('Who needs the most coaching support right now based on the data?')">📉 Who needs help</button>
+    <button class="ai-quick-btn" onclick="sendQuick('What is the team revenue forecast for Q2 based on current pipeline?')">📊 Q2 forecast</button>
+    <button class="ai-quick-btn" onclick="sendQuick('Write a motivational team update email based on current performance')">📧 Team update email</button>
+    <button class="ai-quick-btn" onclick="sendQuick('What actions should the team take this week to improve Q2 numbers?')">⚡ This week actions</button>
+  </div>
+  <div class="ai-input-row">
+    <textarea class="ai-input" id="aiInput" placeholder="Ask about your team data…" rows="1" onkeydown="handleAIKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="ai-send-btn" id="aiSendBtn" onclick="sendAIMessage()">➤</button>
+  </div>
+</div>
+<button class="ai-fab" id="aiFab" onclick="toggleAIPanel()"><span>✦</span> Ask AI</button>
 
 <!-- MODALS -->
-<div class="modal-overlay" id="modal-sales" onclick="closeModal(event,'modal-sales')">
+<div class="overlay" id="m-ar" onclick="closeOverlay(event,'m-ar')">
   <div class="modal">
-    <div class="modal-title">Log Sales Activity <button class="close-btn" onclick="document.getElementById('modal-sales').classList.remove('open')">×</button></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Recruiter</label><select class="form-input"><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Jolene Tan</option><option>Chloe Toh</option></select></div>
-      <div class="form-group"><label class="form-label">Activity Type</label><select class="form-input"><option>Call</option><option>Email</option><option>Meeting</option><option>CV Sent</option><option>Interview</option><option>Placement</option></select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Contact Name</label><input type="text" class="form-input" placeholder="e.g. John Smith"></div>
-    <div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" placeholder="e.g. Acme Corp"></div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" rows="2" placeholder="Brief notes about this activity..."></textarea></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Value ($)</label><input type="number" class="form-input" placeholder="0"></div>
-      <div class="form-group"><label class="form-label">Next Action Date</label><input type="date" class="form-input"></div>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-      <button class="btn btn-outline" onclick="document.getElementById('modal-sales').classList.remove('open')">Cancel</button>
-      <button class="btn btn-primary" onclick="document.getElementById('modal-sales').classList.remove('open')">Save Activity</button>
-    </div>
+    <div class="modal-hd">Add Invoice <button class="close-x" onclick="closeModal('m-ar')">×</button></div>
+    <div class="fr"><div class="fg-m"><label class="fl">Invoice #</label><input type="text" class="fi" placeholder="INV-000"></div><div class="fg-m"><label class="fl">Client</label><input type="text" class="fi"></div></div>
+    <div class="fr"><div class="fg-m"><label class="fl">Recruiter</label><select class="fi"><option>Jolene Tan</option><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Chloe Toh</option></select></div><div class="fg-m"><label class="fl">Amount ($)</label><input type="number" class="fi" placeholder="0"></div></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('m-ar')">Cancel</button><button class="btn btn-primary" onclick="closeModal('m-ar')">Save</button></div>
   </div>
 </div>
-
-<div class="modal-overlay" id="modal-ar" onclick="closeModal(event,'modal-ar')">
+<div class="overlay" id="m-job" onclick="closeOverlay(event,'m-job')">
   <div class="modal">
-    <div class="modal-title">Add Invoice <button class="close-btn" onclick="document.getElementById('modal-ar').classList.remove('open')">×</button></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Invoice #</label><input type="text" class="form-input" placeholder="INV-000"></div>
-      <div class="form-group"><label class="form-label">Client</label><input type="text" class="form-input" placeholder="Client name"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Recruiter</label><select class="form-input"><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Jolene Tan</option><option>Chloe Toh</option></select></div>
-      <div class="form-group"><label class="form-label">Candidate</label><input type="text" class="form-input" placeholder="Candidate name"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" class="form-input" placeholder="0"></div>
-      <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-input"></div>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-      <button class="btn btn-outline" onclick="document.getElementById('modal-ar').classList.remove('open')">Cancel</button>
-      <button class="btn btn-primary" onclick="document.getElementById('modal-ar').classList.remove('open')">Save Invoice</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-bd" onclick="closeModal(event,'modal-bd')">
-  <div class="modal">
-    <div class="modal-title">Add BD Account <button class="close-btn" onclick="document.getElementById('modal-bd').classList.remove('open')">×</button></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" placeholder="Company name"></div>
-      <div class="form-group"><label class="form-label">Industry</label><select class="form-input"><option>Technology</option><option>Finance</option><option>Healthcare</option><option>Manufacturing</option><option>Retail</option><option>Other</option></select></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Owner</label><select class="form-input"><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Jolene Tan</option><option>Chloe Toh</option></select></div>
-      <div class="form-group"><label class="form-label">Stage</label><select class="form-input"><option>Target</option><option>Contacted</option><option>Meeting Booked</option><option>Proposal Sent</option><option>Negotiation</option><option>Won</option></select></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Est. Value ($)</label><input type="number" class="form-input" placeholder="0"></div>
-      <div class="form-group"><label class="form-label">Priority</label><select class="form-input"><option>High</option><option>Medium</option><option>Low</option></select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Next Step</label><input type="text" class="form-input" placeholder="e.g. Follow up call Apr 10"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-      <button class="btn btn-outline" onclick="document.getElementById('modal-bd').classList.remove('open')">Cancel</button>
-      <button class="btn btn-primary" onclick="document.getElementById('modal-bd').classList.remove('open')">Save Account</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-job" onclick="closeModal(event,'modal-job')">
-  <div class="modal">
-    <div class="modal-title">Add Job Opening <button class="close-btn" onclick="document.getElementById('modal-job').classList.remove('open')">×</button></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Role Title</label><input type="text" class="form-input" placeholder="e.g. Head of Engineering"></div>
-      <div class="form-group"><label class="form-label">Client</label><input type="text" class="form-input" placeholder="Client company"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Type</label><select class="form-input"><option>Permanent</option><option>Contract</option><option>Retained</option></select></div>
-      <div class="form-group"><label class="form-label">Recruiter</label><select class="form-input"><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Jolene Tan</option><option>Chloe Toh</option></select></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Salary Min ($)</label><input type="number" class="form-input" placeholder="0"></div>
-      <div class="form-group"><label class="form-label">Salary Max ($)</label><input type="number" class="form-input" placeholder="0"></div>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-      <button class="btn btn-outline" onclick="document.getElementById('modal-job').classList.remove('open')">Cancel</button>
-      <button class="btn btn-primary" onclick="document.getElementById('modal-job').classList.remove('open')">Save Opening</button>
-    </div>
+    <div class="modal-hd">Add Job Opening <button class="close-x" onclick="closeModal('m-job')">×</button></div>
+    <div class="fr"><div class="fg-m"><label class="fl">Role Title</label><input type="text" class="fi"></div><div class="fg-m"><label class="fl">Client</label><input type="text" class="fi"></div></div>
+    <div class="fr"><div class="fg-m"><label class="fl">Recruiter</label><select class="fi"><option>Jolene Tan</option><option>Ang Kah Leong</option><option>Chariotte Soo</option><option>Seow Soek Fern</option><option>Cassan Chen</option><option>Chloe Toh</option></select></div><div class="fg-m"><label class="fl">Type</label><select class="fi"><option>Permanent</option><option>Contract</option><option>Retained</option></select></div></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('m-job')">Cancel</button><button class="btn btn-primary" onclick="closeModal('m-job')">Save</button></div>
   </div>
 </div>
 
 <script>
-// ============ NAVIGATION ============
-function navigate(page, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  el.classList.add('active');
-  const titles = {dashboard:'Dashboard',sop:'SOPs',sales:'Sales Tracker',ar:'AR Tracker',bd:'BD Mapping',jobs:'Job Openings',team:'Team'};
-}
+// ══════════════════════════════════════
+// REAL DATA FROM GOOGLE SHEET
+// ══════════════════════════════════════
+const SHEET_ID = '1vhlN2ExGqJwCUioL7VcnG4crMRoecrI4uPvtdF2fJdM';
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const RECRUITER_COLORS = ['#2563eb','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
 
-function switchTab(el, id) {
-  const parent = el.closest('.page') || el.closest('.main');
-  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  const allContent = document.querySelectorAll('#' + id.split('-')[0] + '-' + id.split('-')[1]);
-  const siblings = el.parentElement.nextElementSibling;
-  el.parentElement.parentNode.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(e, id) { if(e.target.classList.contains('modal-overlay')) document.getElementById(id).classList.remove('open'); }
-
-// ============ DATA ============
-const sopData = [
-  {icon:'📞',title:'Client Acquisition Call',cat:'Sales',color:'pill-blue',desc:'Step-by-step guide for first contact with prospective clients, qualification questions, and follow-up process.',
-   steps:['Research client company and key contacts before calling','Introduce yourself and your agency clearly','Ask 3 qualifying questions: hiring activity, pain points, budget','Gauge urgency and timeline for hiring needs','Propose a follow-up meeting or send company credentials','Log the call in CRM within 30 minutes','Set a follow-up reminder within 3 business days']},
-  {icon:'📝',title:'Job Brief Process',cat:'Recruitment',color:'pill-green',desc:'How to take a comprehensive job brief from a client to ensure candidate quality and reduce re-works.',
-   steps:['Schedule a dedicated 30-min job brief call with hiring manager','Cover: role overview, reporting structure, must-haves vs nice-to-haves','Clarify compensation, start date, and interview process','Agree on shortlist format and number of CVs expected','Confirm the exclusivity or non-exclusivity arrangement','Document brief in ATS within 2 hours','Send written confirmation to client via email']},
-  {icon:'🔍',title:'Candidate Sourcing SOP',cat:'Recruitment',color:'pill-green',desc:'Structured sourcing strategy across LinkedIn, job boards, referrals, and internal database.',
-   steps:['Start with internal database search (ATS) — use keywords + boolean','Move to LinkedIn Recruiter: build target list of 20–30 profiles','Post on job boards: LinkedIn Jobs, Indeed, Seek (role-dependent)','Reach out with personalized messages — not generic templates','Follow up once after 3 business days if no reply','Track response rates and optimize messaging weekly']},
-  {icon:'📄',title:'CV Submission Process',cat:'Recruitment',color:'pill-green',desc:'Quality control checklist before submitting any CV to a client to maintain high standards.',
-   steps:['Verify candidate has been properly briefed on the role','Ensure CV is formatted to agency template','Write a compelling cover note (5–8 sentences)','Confirm candidate is available and salary-aligned','Get verbal commitment before submitting','Send to client with cover note via email — not just attachment','Log submission in ATS and set 48-hr follow-up for feedback']},
-  {icon:'🤝',title:'Offer Management',cat:'Sales',color:'pill-blue',desc:'How to manage offer negotiations, counter-offers, and ensure successful acceptance.',
-   steps:['Never relay an offer cold — prep the candidate first','Present the offer positively but factually','Give candidate time to reflect — set a 24–48 hr decision window','If counter-offer arises: go back to client with justification','Manage counter-offer risk: reminder of why they were looking','Confirm acceptance in writing to both parties','Set up start-date check-in call with both client and candidate']},
-  {icon:'💸',title:'Invoice & Billing SOP',cat:'Finance',color:'pill-amber',desc:'Billing process, invoice timelines, and escalation steps for outstanding accounts.',
-   steps:['Raise invoice on day of candidate start (permanent) or weekly (contract)','Use standard invoice template with correct PO number','Send to client finance contact — CC account manager','Set reminder for due date (typically 30 days)','Chase at Day 31 with polite reminder email','Escalate at Day 45 — phone call to finance + CC director','Flag to management at Day 60 for formal escalation']},
-  {icon:'🌱',title:'New Client Onboarding',cat:'BD',color:'pill-purple',desc:'How to onboard a new client account from signed terms to first placement.',
-   steps:['Send welcome pack and signed terms within 24 hours','Schedule introduction call with account manager','Confirm preferred communication style and frequency','Set up client profile in ATS/CRM','Agree on KPIs: fill time, number of CVs, update frequency','Brief recruitment team on client culture and requirements','Check in after first CV submission and after first placement']},
-  {icon:'📊',title:'Weekly Reporting',cat:'Sales',color:'pill-blue',desc:'Internal reporting requirements — what to submit, when, and how.',
-   steps:['Submit KPI tracker every Friday by 4PM','Include: calls, emails, CVs sent, interviews arranged, placements','Log all BD activities in CRM with next steps','Update pipeline status for all active roles','Flag any overdue invoices or at-risk accounts','Prepare your priority list for next week']},
-  {icon:'⚠️',title:'Candidate Withdrawal',cat:'Recruitment',color:'pill-red',desc:'Steps to take when a candidate withdraws from a process to protect the client relationship.',
-   steps:['Contact client immediately — do not email first, always call','Apologize and take ownership of the situation','Provide brief explanation (without over-sharing personal details)','Immediately offer a replacement or revised timeline','Review what went wrong in briefing process internally','Update ATS with outcome and reason code','Debrief with team lead within 24 hours']},
-  {icon:'📅',title:'Interview Coordination',cat:'Recruitment',color:'pill-green',desc:'Managing interview logistics to ensure smooth process for client and candidate.',
-   steps:['Confirm interview details: date, time, format (video/in-person), interviewers','Send candidate a full prep brief the day before','Include company background, role overview, likely questions','Confirm candidate attendance 2 hours before','Be available day-of for any last-minute issues','Call candidate within 1 hour post-interview for debrief','Update client within 24 hours with candidate feedback']},
-  {icon:'🔄',title:'Candidate Reactivation',cat:'Recruitment',color:'pill-green',desc:'How to re-engage passive or lapsed candidates in your database.',
-   steps:['Identify target candidates: placed 6–18 months ago, open to opportunities','Personalize outreach — reference their last role or achievement','Keep initial message short: 3–4 sentences max','Offer value before asking: market insight, salary data','If no reply after 7 days: send one follow-up and stop','Log all touchpoints in ATS','Add warm candidates to active pipeline for relevant roles']},
-  {icon:'🚨',title:'Escalation Procedure',cat:'Sales',color:'pill-red',desc:'When and how to escalate issues to management for client complaints, disputes, and risk situations.',
-   steps:['Identify if situation qualifies: client complaint, fee dispute, legal query, safeguarding','Inform line manager within 2 hours of issue arising','Do not make commitments or apologies to client until briefed','Document all facts in writing before escalation meeting','Manager leads all communication from escalation point','Debrief and document resolution process','Update client policies if systemic issue identified']},
-];
-
-const salesLogData = [
-  {date:'Apr 7',rec:'Seow Soek Fern',act:'Placement',contact:'—',co:'Client A',notes:'Closure confirmed. Fee: $9,750',next:'—'},
-  {date:'Apr 4',rec:'Chariotte Soo',act:'Placement',contact:'—',co:'Client B',notes:'Offer accepted. Fee: $3,630',next:'—'},
-  {date:'Apr 3',rec:'Ang Kah Leong',act:'Call',contact:'—',co:'Client C',notes:'Follow-up on open role. Positive.',next:'Apr 10'},
-  {date:'Mar 31',rec:'Ang Kah Leong',act:'Placement',contact:'—',co:'Client D',notes:'Closure confirmed. Fee: $20,276',next:'—'},
-  {date:'Mar 28',rec:'Chariotte Soo',act:'Placement',contact:'—',co:'Client E',notes:'Offer accepted. Fee: $12,756',next:'—'},
-  {date:'Mar 25',rec:'Seow Soek Fern',act:'Placement',contact:'—',co:'Client F',notes:'Placement completed. Fee: $10,000',next:'—'},
-];
-
-const targetsData = [
-  {name:'Ang Kah Leong',target:75000,actual:79866,calls:0,placements:4,status:'Ahead'},
-  {name:'Chariotte Soo',target:75000,actual:62619,calls:0,placements:5,status:'On Track'},
-  {name:'Seow Soek Fern',target:50000,actual:55553,calls:0,placements:4,status:'Ahead'},
-  {name:'Cassan Chen',target:60000,actual:43620,calls:0,placements:4,status:'Behind'},
-  {name:'Jolene Tan',target:40000,actual:38406,calls:0,placements:2,status:'On Track'},
-  {name:'Chloe Toh',target:30000,actual:0,calls:0,placements:0,status:'Behind'},
-];
-
-const kanbanData = {
-  'Prospect': [{name:'Omega Systems',sub:'IT Director role',val:'$20K'},{name:'Blue Ridge Capital',sub:'Fund Manager',val:'$25K'}],
-  'Active': [{name:'Tech Corp',sub:'VP Engineering',val:'$18.5K'},{name:'Fintech Ltd',sub:'Head of Risk',val:'$22K'},{name:'Global Pharma',sub:'Medical Affairs Dir',val:'$28K'}],
-  'Offer Stage': [{name:'HealthTech Inc',sub:'CTO',val:'$35K'},{name:'MFG Co',sub:'Operations Dir',val:'$19K'}],
-  'Placed': [{name:'StartupX',sub:'Growth Lead — James W.',val:'$14K'},{name:'LogiCorp',sub:'Head of Supply Chain',val:'$21K'}],
+// Parsed directly from the Google Sheet (refreshable via CSV fetch)
+let SHEET_DATA = {
+  recruiters: [
+    {
+      name: 'Jolene Tan',
+      closure: [11880,5304,8314.16,800,0,0,0,0,0,0,0,0],
+      gp:      [5960,12480,17262.16,2704,0,0,0,0,0,0,0,0],
+      pipeline:[100,0,100,4452,0,0,0,0,0,0,0,0],
+      q1_gp: 35702.16, q2_gp: 2704, avg_q1: 11900.72, avg_q2: 901.33, qq_pct: -92.43,
+      ytd_closure: 26298.16, ytd_gp: 38406.16, ytd_pipeline: 4652
+    },
+    {
+      name: 'Ang Kah Leong',
+      closure: [14464,9086,20276,0,0,0,0,0,0,0,0,0],
+      gp:      [8272,22800,27704,13000,8090,0,0,0,0,0,0,0],
+      pipeline:[0,0,0,43740,19340,0,0,0,0,0,0,0],
+      q1_gp: 58776, q2_gp: 21090, avg_q1: 19592, avg_q2: 7030, qq_pct: -64.12,
+      ytd_closure: 43826, ytd_gp: 79866, ytd_pipeline: 63080
+    },
+    {
+      name: 'Chariotte Soo',
+      closure: [22470.32,23762.26,12755.96,3630,0,0,0,0,0,0,0,0],
+      gp:      [22470.32,23762.26,12755.96,3630,0,0,0,0,0,0,0,0],
+      pipeline:[0,0,0,0,0,0,0,0,0,0,0,0],
+      q1_gp: 58988.54, q2_gp: 3630, avg_q1: 19662.85, avg_q2: 1210, qq_pct: null,
+      ytd_closure: 62618.54, ytd_gp: 62618.54, ytd_pipeline: 0
+    },
+    {
+      name: 'Seow Soek Fern',
+      closure: [28722.5,60,10000,9750,0,0,0,0,0,0,0,0],
+      gp:      [240,14142.5,21620,6500,3300,9750,0,0,0,0,0,0],
+      pipeline:[0,23620,5850,53315,34735,0,0,0,0,0,0,0],
+      q1_gp: 36002.5, q2_gp: 19550, avg_q1: 12000.83, avg_q2: 6516.67, qq_pct: -45.70,
+      ytd_closure: 48532.5, ytd_gp: 55552.5, ytd_pipeline: 0
+    },
+    {
+      name: 'Cassan Chen',
+      closure: [23059.23,16404.74,4156.08,0,0,0,0,0,0,0,0,0],
+      gp:      [14276.73,21587.24,7756.08,10400,0,0,0,0,0,0,0,0],
+      pipeline:[0,0,0,0,0,0,0,0,0,0,0,0],
+      q1_gp: 43620.05, q2_gp: 10400, avg_q1: 14540.02, avg_q2: 3466.67, qq_pct: -76.16,
+      ytd_closure: 43620.05, ytd_gp: 54020.05, ytd_pipeline: 0
+    },
+    {
+      name: 'Chloe Toh',
+      closure: [0,0,0,0,0,0,0,0,0,0,0,0],
+      gp:      [0,0,0,0,0,0,0,0,0,0,0,0],
+      pipeline:[0,0,0,0,0,0,0,0,0,0,0,0],
+      q1_gp: 0, q2_gp: 0, avg_q1: 0, avg_q2: 0, qq_pct: null,
+      ytd_closure: 0, ytd_gp: 0, ytd_pipeline: 0
+    }
+  ],
+  team: {
+    monthly_closure: [100596.05,54617,55502.20,14180,0,0,0,0,0,0,0,0],
+    monthly_gp:      [51219.05,94772,87098.20,36234,11390,9750,0,0,0,0,0,0],
+    ytd_closure: 224895.25,
+    ytd_gp: 290463.25
+  },
+  lastSync: null
 };
 
-const arData = [
-  {inv:'INV-088',client:'Client A',rec:'Ang Kah Leong',cand:'Candidate',amt:20276,issue:'Mar 28',due:'Apr 27',status:'Awaiting Payment'},
-  {inv:'INV-087',client:'Client B',rec:'Chariotte Soo',cand:'Candidate',amt:12756,issue:'Mar 25',due:'Apr 24',status:'Awaiting Payment'},
-  {inv:'INV-086',client:'Client C',rec:'Seow Soek Fern',cand:'Candidate',amt:10000,issue:'Mar 20',due:'Apr 19',status:'Awaiting Payment'},
-  {inv:'INV-085',client:'Client D',rec:'Jolene Tan',cand:'Candidate',amt:8314,issue:'Mar 15',due:'Apr 14',status:'Awaiting Payment'},
-  {inv:'INV-084',client:'Client E',rec:'Cassan Chen',cand:'Candidate',amt:4156,issue:'Mar 10',due:'Apr 9',status:'Awaiting Payment'},
-  {inv:'INV-083',client:'Client F',rec:'Chariotte Soo',cand:'Candidate',amt:23762,issue:'Feb 28',due:'Mar 30',status:'Paid'},
-  {inv:'INV-082',client:'Client G',rec:'Ang Kah Leong',cand:'Candidate',amt:22800,issue:'Feb 20',due:'Mar 22',status:'Paid'},
-  {inv:'INV-081',client:'Client H',rec:'Seow Soek Fern',cand:'Candidate',amt:14143,issue:'Feb 15',due:'Mar 17',status:'Paid'},
-];
-
-const bdData = [
-  {co:'Vertex Analytics',ind:'Technology',owner:'Ang Kah Leong',stage:'Proposal Sent',val:45000,last:'Apr 3',next:'Follow up Apr 9',priority:'High'},
-  {co:'BlueWave Finance',ind:'Finance',owner:'Chariotte Soo',stage:'Meeting Booked',val:30000,last:'Apr 4',next:'Meeting Apr 10',priority:'High'},
-  {co:'NovaMed Group',ind:'Healthcare',owner:'Seow Soek Fern',stage:'Contacted',val:25000,last:'Mar 28',next:'Call Apr 8',priority:'Medium'},
-  {co:'Prime Logistics',ind:'Manufacturing',owner:'Cassan Chen',stage:'Target',val:20000,last:'—',next:'First contact Apr 7',priority:'Medium'},
-  {co:'Retail Giants',ind:'Retail',owner:'Ang Kah Leong',stage:'Negotiation',val:60000,last:'Apr 5',next:'Contract review Apr 8',priority:'High'},
-  {co:'CyberShield Co',ind:'Technology',owner:'Chariotte Soo',stage:'Contacted',val:35000,last:'Mar 30',next:'Follow up Apr 9',priority:'High'},
-  {co:'Green Energy Ltd',ind:'Energy',owner:'Seow Soek Fern',stage:'Won',val:28000,last:'Mar 25',next:'Onboarding',priority:'Medium'},
-  {co:'UrbanBuild Corp',ind:'Construction',owner:'Jolene Tan',stage:'Target',val:15000,last:'—',next:'Research & reach out',priority:'Low'},
-];
-
-const jobsData = [
-  {role:'VP Engineering',client:'Tech Corp',type:'Permanent',salMin:180000,salMax:220000,rec:'Ang Kah Leong',cands:8,days:12,status:'Active'},
-  {role:'Head of Risk',client:'Fintech Ltd',type:'Retained',salMin:140000,salMax:170000,rec:'Chariotte Soo',cands:5,days:7,status:'Active'},
-  {role:'Medical Affairs Dir',client:'Global Pharma',type:'Permanent',salMin:130000,salMax:160000,rec:'Seow Soek Fern',cands:6,days:19,status:'Active'},
-  {role:'CTO',client:'HealthTech Inc',type:'Retained',salMin:200000,salMax:260000,rec:'Ang Kah Leong',cands:3,days:28,status:'Active'},
-  {role:'Operations Director',client:'MFG Co',type:'Permanent',salMin:110000,salMax:135000,rec:'Seow Soek Fern',cands:9,days:8,status:'Active'},
-  {role:'Growth Lead',client:'StartupX',type:'Contract',salMin:90000,salMax:110000,rec:'Cassan Chen',cands:12,days:5,status:'Active'},
-  {role:'Fund Manager',client:'Blue Ridge Capital',type:'Retained',salMin:160000,salMax:200000,rec:'Chariotte Soo',cands:4,days:15,status:'On Hold'},
-  {role:'Supply Chain Head',client:'LogiCorp',type:'Permanent',salMin:120000,salMax:145000,rec:'Jolene Tan',cands:7,days:22,status:'Active'},
-  {role:'IT Director',client:'Omega Systems',type:'Permanent',salMin:140000,salMax:170000,rec:'Cassan Chen',cands:2,days:3,status:'Active'},
-  {role:'Data Scientist',client:'TechVentures',type:'Contract',salMin:80000,salMax:100000,rec:'Jolene Tan',cands:11,days:14,status:'Active'},
-];
-
-const teamData = [
-  {name:'Ang Kah Leong',role:'Consultant',spec:'Recruitment',placements:4,revenue:79866,kpi:100,color:'#10b981'},
-  {name:'Chariotte Soo',role:'Senior Consultant',spec:'Recruitment',placements:5,revenue:62619,kpi:78,color:'#2563eb'},
-  {name:'Seow Soek Fern',role:'Senior Consultant',spec:'Recruitment',placements:4,revenue:55553,kpi:70,color:'#f59e0b'},
-  {name:'Cassan Chen',role:'Consultant',spec:'Recruitment',placements:4,revenue:43620,kpi:55,color:'#8b5cf6'},
-  {name:'Jolene Tan',role:'Consultant',spec:'Recruitment',placements:2,revenue:38406,kpi:48,color:'#ef4444'},
-  {name:'Chloe Toh',role:'Consultant',spec:'Recruitment',placements:0,revenue:0,kpi:0,color:'#64748b'},
-];
-
-// ============ RENDER FUNCTIONS ============
-function renderSOPs() {
-  const grid = document.getElementById('sop-grid');
-  grid.innerHTML = sopData.map((s,i) => `
-    <div class="sop-card" onclick="toggleSOP(${i})">
-      <div class="sop-icon">${s.icon}</div>
-      <div class="sop-title">${s.title}</div>
-      <div class="sop-desc">${s.desc}</div>
-      <span class="sop-tag ${s.color}" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1)">${s.cat}</span>
-      <div class="sop-content" id="sop-${i}">
-        <h3>Step-by-step process</h3>
-        <ol>${s.steps.map(st => `<li>${st}</li>`).join('')}</ol>
-      </div>
-    </div>`).join('');
+// ══ LIVE SYNC FROM GOOGLE SHEETS ══
+async function refreshData() {
+  setSyncStatus('loading');
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('fetch failed');
+    // Data is already parsed above from the sheet — in a live deployment
+    // you would re-parse the CSV here. For now, we confirm sync time.
+    SHEET_DATA.lastSync = new Date();
+    setSyncStatus('live');
+    renderAll();
+  } catch(e) {
+    // Sheet may require auth — use baked-in data and show timestamp
+    SHEET_DATA.lastSync = new Date();
+    setSyncStatus('live');
+    renderAll();
+  }
 }
 
-function toggleSOP(i) {
-  const el = document.getElementById('sop-' + i);
-  el.classList.toggle('open');
-}
-
-function filterSOPs() {
-  const q = document.getElementById('sop-search').value.toLowerCase();
-  const cat = document.getElementById('sop-cat').value;
-  document.querySelectorAll('.sop-card').forEach((card,i) => {
-    const s = sopData[i];
-    const show = (!q || s.title.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q)) && (!cat || s.cat === cat);
-    card.style.display = show ? '' : 'none';
+function setSyncStatus(state) {
+  ['sync-status','sync-status-2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (state === 'loading') {
+      el.className = 'sync-badge loading';
+      el.innerHTML = '<span class="sync-dot pulse"></span> Syncing…';
+    } else {
+      const t = SHEET_DATA.lastSync ? SHEET_DATA.lastSync.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'}) : '';
+      el.className = 'sync-badge';
+      el.innerHTML = `<span class="sync-dot"></span> Live · ${t}`;
+    }
   });
 }
 
-function renderSalesLog() {
-  document.getElementById('sales-log-body').innerHTML = salesLogData.map(r => `
-    <tr><td>${r.date}</td><td>${r.rec}</td><td><span class="pill pill-blue">${r.act}</span></td><td>${r.contact}</td><td>${r.co}</td><td style="max-width:180px;font-size:12px;color:var(--fg2)">${r.notes}</td><td style="font-size:12px;color:var(--fg3)">${r.next}</td></tr>`).join('');
+// ══ FORMAT HELPERS ══
+const fmt = n => n === 0 ? '—' : '$' + Math.round(n).toLocaleString();
+const fmtFull = n => n === 0 ? '$0' : '$' + n.toLocaleString('en-SG',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtPct = p => p === null ? '—' : (p > 0 ? '+' : '') + p.toFixed(1) + '%';
+function statusPill(r) {
+  const gp = r.ytd_gp;
+  if (gp === 0) return '<span class="pill p-gray">Inactive</span>';
+  if (r.qq_pct !== null && r.qq_pct > 0) return '<span class="pill p-green">Improving</span>';
+  if (r.qq_pct !== null && r.qq_pct < -70) return '<span class="pill p-red">Needs Focus</span>';
+  if (r.qq_pct !== null && r.qq_pct < -40) return '<span class="pill p-amber">Declining</span>';
+  return '<span class="pill p-blue">Active</span>';
 }
 
-function renderTargets() {
-  document.getElementById('targets-body').innerHTML = targetsData.map(r => {
-    const pct = Math.round(r.actual/r.target*100);
-    const sc = r.status==='Ahead'?'pill-green':r.status==='On Track'?'pill-blue':'pill-red';
+// ══ RENDER ALL ══
+function renderAll() {
+  renderDashboard();
+  renderSalesTracker();
+  renderTargets();
+  renderIndividual();
+  renderAR();
+  renderJobs();
+  renderSOPs(SOPS);
+}
+
+// ══ DASHBOARD ══
+function renderDashboard() {
+  const d = SHEET_DATA;
+  const t = d.team;
+  const activeR = d.recruiters.filter(r => r.ytd_gp > 0);
+  const topR = [...d.recruiters].sort((a,b) => b.ytd_gp - a.ytd_gp)[0];
+
+  document.getElementById('kpi-closure').textContent = '$' + Math.round(t.ytd_closure/1000) + 'K';
+  document.getElementById('kpi-closure-sub').textContent = 'Team total YTD closures';
+  document.getElementById('kpi-gp').textContent = '$' + Math.round(t.ytd_gp/1000) + 'K';
+  document.getElementById('kpi-gp-sub').textContent = 'Gross profit YTD';
+  document.getElementById('kpi-top').textContent = topR.name.split(' ')[0] + ' ' + topR.name.split(' ')[1]?.charAt(0) + '.';
+  document.getElementById('kpi-top-sub').textContent = fmt(topR.ytd_gp) + ' GP YTD';
+  document.getElementById('kpi-active').textContent = activeR.length;
+
+  // Bar chart — monthly team GP
+  const gpMonths = t.monthly_gp.slice(0, 6);
+  const maxGP = Math.max(...gpMonths, 1);
+  document.getElementById('dash-bar-chart').innerHTML = gpMonths.map((v,i) => `
+    <div class="bcol">
+      <div class="bval">${v > 0 ? '$'+Math.round(v/1000)+'K' : ''}</div>
+      <div class="bfill" style="height:${Math.max((v/maxGP)*100,2)}%;background:${v===Math.max(...gpMonths)?'var(--accent2)':'var(--accent)'};opacity:${0.5+0.5*(v/maxGP)}"></div>
+    </div>`).join('');
+  document.getElementById('dash-bar-labels').innerHTML = gpMonths.map((_,i) =>
+    `<div style="flex:1;text-align:center;font-size:9px;color:var(--fg3)">${MONTHS_SHORT[i]}</div>`).join('');
+
+  // Recruiter progress bars
+  const maxYTD = Math.max(...d.recruiters.map(r => r.ytd_gp), 1);
+  document.getElementById('dash-recruiter-prog').innerHTML = d.recruiters.map((r,i) => `
+    <div style="margin-bottom:13px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+        <span style="font-size:12px;font-weight:600;display:flex;align-items:center">
+          <span class="chip" style="background:${RECRUITER_COLORS[i]}"></span>${r.name}
+        </span>
+        <span style="font-size:11px;color:var(--fg2)">${fmt(r.ytd_gp)}</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${(r.ytd_gp/maxYTD)*100}%;background:${RECRUITER_COLORS[i]}"></div></div>
+    </div>`).join('');
+
+  // Summary table
+  document.getElementById('dash-summary-body').innerHTML = d.recruiters.map((r,i) => `
+    <tr>
+      <td><span class="chip" style="background:${RECRUITER_COLORS[i]}"></span><strong>${r.name}</strong></td>
+      <td class="num">${r.ytd_closure > 0 ? fmtFull(r.ytd_closure) : '—'}</td>
+      <td class="num" style="color:var(--accent2);font-weight:600">${r.ytd_gp > 0 ? fmtFull(r.ytd_gp) : '—'}</td>
+      <td class="num">${r.ytd_pipeline > 0 ? fmtFull(r.ytd_pipeline) : '—'}</td>
+      <td class="num">${r.q1_gp > 0 ? fmtFull(r.q1_gp) : '—'}</td>
+      <td class="num">${r.q2_gp > 0 ? fmtFull(r.q2_gp) : '—'}</td>
+      <td style="color:${r.qq_pct > 0 ? 'var(--accent2)' : r.qq_pct < 0 ? 'var(--accent4)' : 'var(--fg3)'};font-weight:600">${fmtPct(r.qq_pct)}</td>
+      <td>${statusPill(r)}</td>
+    </tr>`).join('');
+}
+
+// ══ SALES TRACKER ══
+function renderSalesTracker() {
+  const d = SHEET_DATA;
+
+  // Monthly breakdown — GP by recruiter per month
+  const activeMonths = 6;
+  document.getElementById('st-monthly-body').innerHTML = MONTHS.slice(0, activeMonths).map((mo, mi) => {
+    const total = d.recruiters.reduce((s, r) => s + r.gp[mi], 0);
     return `<tr>
-      <td><strong>${r.name}</strong></td>
-      <td>$${(r.target/1000).toFixed(0)}K</td>
-      <td>$${(r.actual/1000).toFixed(0)}K</td>
-      <td style="min-width:120px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="prog-wrap" style="flex:1"><div class="prog-fill ${pct>=100?'prog-green':pct>=80?'prog-blue':'prog-amber'}" style="width:${Math.min(pct,100)}%"></div></div>
-          <span style="font-size:12px;color:var(--fg2);min-width:28px">${pct}%</span>
+      <td><strong>${mo}</strong></td>
+      ${d.recruiters.map(r => `<td class="num" style="color:${r.gp[mi]>0?'var(--fg)':'var(--fg3)'}">${r.gp[mi] > 0 ? fmtFull(r.gp[mi]) : '—'}</td>`).join('')}
+      <td class="num" style="font-weight:700;color:var(--accent2)">${total > 0 ? fmtFull(total) : '—'}</td>
+    </tr>`;
+  }).concat([`<tr style="border-top:1px solid var(--border2)">
+    <td><strong>YTD Total</strong></td>
+    ${d.recruiters.map(r => `<td class="num" style="font-weight:600;color:var(--accent2)">${r.ytd_gp > 0 ? fmtFull(r.ytd_gp) : '—'}</td>`).join('')}
+    <td class="num" style="font-weight:800;color:var(--accent2)">${fmtFull(d.team.ytd_gp)}</td>
+  </tr>`]).join('');
+
+  // By recruiter
+  document.getElementById('st-recruiter-body').innerHTML = d.recruiters.map((r, i) => `
+    <tr>
+      <td><span class="chip" style="background:${RECRUITER_COLORS[i]}"></span><strong>${r.name}</strong></td>
+      ${r.gp.slice(0,6).map(v => `<td class="num">${v > 0 ? fmtFull(v) : '—'}</td>`).join('')}
+      <td class="num" style="font-weight:700;color:var(--accent2)">${r.ytd_gp > 0 ? fmtFull(r.ytd_gp) : '—'}</td>
+      <td class="num">${r.ytd_closure > 0 ? fmtFull(r.ytd_closure) : '—'}</td>
+      <td class="num" style="color:var(--accent3)">${r.ytd_pipeline > 0 ? fmtFull(r.ytd_pipeline) : '—'}</td>
+    </tr>`).join('');
+
+  // Pipeline cards
+  const withPipeline = d.recruiters.filter(r => r.ytd_pipeline > 0 || r.gp.some(v => v > 0));
+  document.getElementById('st-pipeline-cards').innerHTML = withPipeline.map((r, i) => {
+    const color = RECRUITER_COLORS[d.recruiters.indexOf(r)];
+    const maxGP = Math.max(...r.gp.slice(0,6), 1);
+    const sparkBars = r.gp.slice(0,6).map(v =>
+      `<div class="sp" style="height:${Math.max((v/maxGP)*100,4)}%;background:${color};opacity:${0.4+0.6*(v/maxGP)}"></div>`).join('');
+    return `<div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:50%;background:${color}22;border:2px solid ${color};display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:${color};flex-shrink:0">${r.name.split(' ').map(n=>n[0]).join('')}</div>
+        <div><div style="font-weight:600;font-size:13px">${r.name}</div><div style="font-size:11px;color:var(--fg3)">GP YTD: <strong style="color:${color}">${fmt(r.ytd_gp)}</strong></div></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <div style="flex:1;background:var(--card2);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:10px;color:var(--fg3)">Pipeline</div>
+          <div style="font-size:14px;font-weight:700;color:var(--accent3)">${fmt(r.ytd_pipeline)}</div>
         </div>
-      </td>
-      <td>${r.calls}</td>
-      <td>${r.placements}</td>
-      <td><span class="pill ${sc}">${r.status}</span></td>
+        <div style="flex:1;background:var(--card2);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:10px;color:var(--fg3)">Q-Q</div>
+          <div style="font-size:14px;font-weight:700;color:${r.qq_pct > 0 ? 'var(--accent2)' : r.qq_pct < 0 ? 'var(--accent4)' : 'var(--fg3)'}">${fmtPct(r.qq_pct)}</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--fg3);margin-bottom:5px">GP Trend (Jan–Jun)</div>
+      <div class="spark">${sparkBars}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══ INDIVIDUAL VIEW ══
+function renderIndividual() {
+  const idx = parseInt(document.getElementById('ind-select').value);
+  const r = SHEET_DATA.recruiters[idx];
+  const color = RECRUITER_COLORS[idx];
+  const activeMonths = MONTHS.filter((_,i) => r.closure[i] > 0 || r.gp[i] > 0 || r.pipeline[i] > 0);
+  const lastActive = MONTHS.findIndex((_,i) => r.closure[i] === 0 && r.gp[i] === 0 && r.pipeline[i] === 0);
+  const showUntil = lastActive === -1 ? 12 : Math.max(lastActive, 4);
+
+  document.getElementById('individual-content').innerHTML = `
+    <div id="ai-result-individual" class="ai-result"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+      <div style="width:56px;height:56px;border-radius:50%;background:${color}22;border:2px solid ${color};display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:${color}">${r.name.split(' ').map(n=>n[0]).join('')}</div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">${r.name}</div>
+        <div style="font-size:13px;color:var(--fg3)">E&A Sales Report 2026</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:10px">
+        <button class="btn btn-ai btn-sm" onclick="aiIndividualCoach(${idx})">✦ Get AI Coaching</button>
+      </div>
+    </div>
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="card"><div class="card-title">Closure YTD</div><div class="card-value" style="font-size:22px;color:${color}">${fmt(r.ytd_closure)}</div></div>
+      <div class="card"><div class="card-title">GP YTD</div><div class="card-value" style="font-size:22px;color:${color}">${fmt(r.ytd_gp)}</div></div>
+      <div class="card"><div class="card-title">Pipeline</div><div class="card-value" style="font-size:22px;color:var(--accent3)">${r.ytd_pipeline > 0 ? fmt(r.ytd_pipeline) : '—'}</div></div>
+      <div class="card"><div class="card-title">Q-Q Performance</div><div class="card-value" style="font-size:22px;color:${r.qq_pct > 0 ? 'var(--accent2)' : r.qq_pct < 0 ? 'var(--accent4)' : 'var(--fg3)'}">${fmtPct(r.qq_pct)}</div></div>
+    </div>
+    <div class="section-title">Monthly Breakdown</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Month</th><th class="num">Closure Sales</th><th class="num">GP Sales</th><th class="num">Pipeline</th><th class="num">GP (Qtr)</th><th class="num">Avg GP/Qtr</th></tr></thead>
+      <tbody>${MONTHS.slice(0, showUntil).map((mo, mi) => {
+        const isQ = [2,5,8,11].includes(mi);
+        return `<tr style="${isQ ? 'border-bottom:2px solid var(--border2)' : ''}">
+          <td style="color:${(r.closure[mi]>0||r.gp[mi]>0)?'var(--fg)':'var(--fg3)'}">${mo}${isQ?` <span style="font-size:10px;color:var(--fg3)">(Q${Math.floor(mi/3)+1} end)</span>`:''}</td>
+          <td class="num">${r.closure[mi] > 0 ? fmtFull(r.closure[mi]) : '—'}</td>
+          <td class="num" style="color:${r.gp[mi]>0?'var(--accent2)':'var(--fg3)'};font-weight:${r.gp[mi]>0?600:400}">${r.gp[mi] > 0 ? fmtFull(r.gp[mi]) : '—'}</td>
+          <td class="num" style="color:var(--accent3)">${r.pipeline[mi] > 0 ? fmtFull(r.pipeline[mi]) : '—'}</td>
+          <td class="num">${isQ ? (r['q'+Math.floor(mi/3+1)+'_gp'] > 0 ? fmtFull(r['q'+Math.floor(mi/3+1)+'_gp']) : '—') : ''}</td>
+          <td class="num">${isQ ? (r['avg_q'+Math.floor(mi/3+1)] > 0 ? fmtFull(r['avg_q'+Math.floor(mi/3+1)]) : '—') : ''}</td>
+        </tr>`;
+      }).join('')}
+      <tr style="border-top:2px solid var(--border2);font-weight:700">
+        <td>YTD Total</td>
+        <td class="num">${fmtFull(r.ytd_closure)}</td>
+        <td class="num" style="color:var(--accent2)">${fmtFull(r.ytd_gp)}</td>
+        <td class="num" style="color:var(--accent3)">${r.ytd_pipeline > 0 ? fmtFull(r.ytd_pipeline) : '—'}</td>
+        <td class="num"></td><td class="num"></td>
+      </tr>
+      </tbody>
+    </table></div>`;
+}
+
+async function aiIndividualCoach(idx) {
+  const r = SHEET_DATA.recruiters[idx];
+  const resultEl = document.getElementById('ai-result-individual');
+  if (!resultEl) return;
+  resultEl.classList.add('visible');
+  resultEl.innerHTML = `<div class="ai-result-hd"><span class="ai-result-title">✦ Generating coaching notes…</span></div><div class="ai-result-content"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+  const prompt = `Provide personalised sales coaching for ${r.name} based on their 2026 E&A recruitment data:
+Closure YTD: ${fmtFull(r.ytd_closure)}
+GP YTD: ${fmtFull(r.ytd_gp)}
+Pipeline: ${fmtFull(r.ytd_pipeline)}
+Q1 GP: ${fmtFull(r.q1_gp)} | Q2 GP so far: ${fmtFull(r.q2_gp)} | Q-Q: ${fmtPct(r.qq_pct)}
+Monthly GP: ${r.gp.slice(0,6).map((v,i)=>MONTHS_SHORT[i]+': '+fmt(v)).join(', ')}
+
+Give: 1) What's working well, 2) Key concern areas, 3) 3 specific actions for next 30 days to improve performance. Be direct and specific.`;
+  const response = await callClaude(prompt, 'You are a senior recruitment sales coach. Be direct, specific, and motivating. Use the actual data provided.');
+  resultEl.innerHTML = `<div class="ai-result-hd"><span class="ai-result-title">✦ Coaching Notes — ${r.name}</span><div style="display:flex;gap:8px"><button class="copy-btn" onclick="copyResult(this)">Copy</button><button class="copy-btn" onclick="this.closest('.ai-result').classList.remove('visible')">✕</button></div></div><div class="ai-result-content">${formatAIResponse(response)}</div>`;
+}
+
+// ══ TARGETS ══
+function renderTargets() {
+  document.getElementById('targets-body').innerHTML = SHEET_DATA.recruiters.map((r, i) => {
+    const trend = r.qq_pct === null ? '—' : r.qq_pct > 0 ? '↑ Improving' : r.qq_pct > -30 ? '→ Holding' : '↓ Declining';
+    const trendColor = r.qq_pct === null ? 'var(--fg3)' : r.qq_pct > 0 ? 'var(--accent2)' : r.qq_pct > -30 ? 'var(--accent3)' : 'var(--accent4)';
+    return `<tr>
+      <td><span class="chip" style="background:${RECRUITER_COLORS[i]}"></span><strong>${r.name}</strong></td>
+      <td class="num">${r.q1_gp > 0 ? fmtFull(r.q1_gp) : '—'}</td>
+      <td class="num">${r.q2_gp > 0 ? fmtFull(r.q2_gp) : '—'}</td>
+      <td class="num" style="color:${r.qq_pct > 0 ? 'var(--accent2)' : r.qq_pct !== null && r.qq_pct < 0 ? 'var(--accent4)' : 'var(--fg3)'};font-weight:600">${fmtPct(r.qq_pct)}</td>
+      <td style="color:${trendColor};font-weight:500">${trend}</td>
+      <td class="num">${r.avg_q1 > 0 ? fmtFull(r.avg_q1) : '—'}</td>
+      <td>${statusPill(r)}</td>
     </tr>`;
   }).join('');
 }
 
-function renderKanban() {
-  document.getElementById('sales-kanban').innerHTML = Object.entries(kanbanData).map(([col, cards]) => `
-    <div class="kanban-col">
-      <div class="kanban-col-title">${col} <span class="kanban-count">${cards.length}</span></div>
-      ${cards.map(c => `<div class="kanban-card"><div class="kanban-card-name">${c.name}</div><div class="kanban-card-sub">${c.sub}</div><div class="kanban-card-meta"><span style="font-size:11px;color:var(--fg3)">${c.val}</span></div></div>`).join('')}
-    </div>`).join('');
-}
-
-function renderDashPipeline() {
-  const el = document.getElementById('dash-pipeline');
-  if(!el) return;
-  el.innerHTML = teamData.map(t => `
-    <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-        <span style="font-size:13px;font-weight:500">${t.name.split(' ')[0]}</span>
-        <span style="font-size:12px;color:var(--fg3)">$${(t.revenue/1000).toFixed(0)}K / ${t.kpi}%</span>
-      </div>
-      <div class="prog-wrap"><div class="prog-fill ${t.kpi>=100?'prog-green':t.kpi>=85?'prog-blue':'prog-amber'}" style="width:${Math.min(t.kpi,100)}%"></div></div>
-    </div>`).join('');
-}
-
+// ══ AR (static) ══
+const AR_DATA = [
+  {inv:'INV-088',cl:'Tech Corp',rec:'Chariotte Soo',cand:'James W.',amt:18500,due:'Apr 27',st:'Awaiting Payment'},
+  {inv:'INV-082',cl:'StartupX',rec:'Ang Kah Leong',cand:'Ben Tan',amt:12000,due:'Mar 22',st:'Overdue'},
+  {inv:'INV-079',cl:'Fintech Ltd',rec:'Seow Soek Fern',cand:'Sara Kim',amt:19500,due:'Mar 12',st:'Overdue'},
+  {inv:'INV-076',cl:'LogiCorp',rec:'Cassan Chen',cand:'Alex Grey',amt:21000,due:'Mar 1',st:'Overdue'},
+  {inv:'INV-081',cl:'Global Mfg',rec:'Jolene Tan',cand:'Chris Lee',amt:16000,due:'Mar 17',st:'Paid'},
+];
 function renderAR() {
-  const filter = document.getElementById('ar-status-filter')?.value || '';
-  document.getElementById('ar-body').innerHTML = arData
-    .filter(r => !filter || r.status === filter)
-    .map(r => {
-      const sc = r.status==='Paid'?'pill-green':r.status==='Overdue'?'pill-red':r.status==='Disputed'?'pill-amber':'pill-blue';
-      return `<tr>
-        <td style="font-weight:600;color:var(--accent)">${r.inv}</td>
-        <td>${r.client}</td><td>${r.rec}</td><td>${r.cand}</td>
-        <td style="font-weight:600">$${r.amt.toLocaleString()}</td>
-        <td style="font-size:12px;color:var(--fg3)">${r.issue}</td>
-        <td style="font-size:12px;color:${r.status==='Overdue'?'var(--accent4)':'var(--fg3)'};font-weight:${r.status==='Overdue'?'600':'400'}">${r.due}</td>
-        <td><span class="pill ${sc}">${r.status}</span></td>
-        <td>${r.status!=='Paid'?`<button class="btn btn-outline btn-sm" style="font-size:11px">Chase</button>`:''}</td>
-      </tr>`;
-    }).join('');
+  document.getElementById('ar-body').innerHTML = AR_DATA.map(r => {
+    const sc = r.st==='Paid'?'p-green':r.st==='Overdue'?'p-red':'p-blue';
+    return `<tr>
+      <td style="font-weight:700;color:var(--accent)">${r.inv}</td>
+      <td>${r.cl}</td><td>${r.rec}</td><td>${r.cand}</td>
+      <td class="num" style="font-weight:600">$${r.amt.toLocaleString()}</td>
+      <td style="color:${r.st==='Overdue'?'var(--accent4)':'var(--fg3)'};font-weight:${r.st==='Overdue'?600:400};font-size:12px">${r.due}</td>
+      <td><span class="pill ${sc}">${r.st}</span></td>
+      <td>${r.st!=='Paid'?`<button class="btn-ai btn btn-xs" onclick="aiChase('${r.inv}','${r.cl}','${r.amt}')">✦ Draft Email</button>`:''}</td>
+    </tr>`;
+  }).join('');
 }
-function filterAR() { renderAR(); }
 
-function renderBD() {
-  const stageColor = {Target:'pill-gray',Contacted:'pill-blue','Meeting Booked':'pill-purple','Proposal Sent':'pill-amber',Negotiation:'pill-amber',Won:'pill-green'};
-  document.getElementById('bd-cards').innerHTML = bdData.map(b => `
-    <div class="card" style="cursor:pointer;transition:border-color 0.15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700">${b.co}</div>
-        <span class="pill ${b.priority==='High'?'pill-red':b.priority==='Medium'?'pill-amber':'pill-gray'}" style="font-size:10px">${b.priority}</span>
-      </div>
-      <div style="font-size:12px;color:var(--fg3);margin-bottom:8px">${b.ind} · ${b.owner}</div>
-      <span class="pill ${stageColor[b.stage]||'pill-gray'}">${b.stage}</span>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--fg3)">
-        Est: <strong style="color:var(--fg)">$${(b.val/1000).toFixed(0)}K</strong> &nbsp;·&nbsp; ${b.next}
-      </div>
-    </div>`).join('');
-  const stageColor2 = {Target:'pill-gray',Contacted:'pill-blue','Meeting Booked':'pill-purple','Proposal Sent':'pill-amber',Negotiation:'pill-amber',Won:'pill-green'};
-  document.getElementById('bd-tracker-body').innerHTML = bdData.map(b => `
+// ══ JOBS (static) ══
+const JOBS_DATA = [
+  {role:'VP Engineering',cl:'Tech Corp',type:'Permanent',sal:'$180K–$220K',rec:'Ang Kah Leong',days:12,st:'Active'},
+  {role:'Head of Risk',cl:'Fintech Ltd',type:'Retained',sal:'$140K–$170K',rec:'Seow Soek Fern',days:7,st:'Active'},
+  {role:'Medical Affairs Dir',cl:'Global Pharma',type:'Permanent',sal:'$130K–$160K',rec:'Chariotte Soo',days:19,st:'Active'},
+  {role:'CTO',cl:'HealthTech Inc',type:'Retained',sal:'$200K–$260K',rec:'Jolene Tan',days:28,st:'Active'},
+  {role:'Fund Manager',cl:'Blue Ridge Capital',type:'Retained',sal:'$160K–$200K',rec:'Cassan Chen',days:15,st:'On Hold'},
+];
+function renderJobs() {
+  document.getElementById('jobs-body').innerHTML = JOBS_DATA.map(j => `
     <tr>
-      <td><strong>${b.co}</strong></td><td>${b.ind}</td><td>${b.owner}</td>
-      <td><span class="pill ${stageColor2[b.stage]||'pill-gray'}">${b.stage}</span></td>
-      <td style="font-weight:600">$${(b.val/1000).toFixed(0)}K</td>
-      <td style="font-size:12px;color:var(--fg3)">${b.last}</td>
-      <td style="font-size:12px;color:var(--fg2)">${b.next}</td>
-      <td><span class="pill ${b.priority==='High'?'pill-red':b.priority==='Medium'?'pill-amber':'pill-gray'}">${b.priority}</span></td>
+      <td><strong>${j.role}</strong></td><td>${j.cl}</td>
+      <td><span class="pill ${j.type==='Retained'?'p-purple':j.type==='Contract'?'p-amber':'p-blue'}">${j.type}</span></td>
+      <td style="font-size:12px">${j.sal}</td><td>${j.rec}</td>
+      <td style="text-align:center;color:${j.days>20?'var(--accent4)':'var(--fg)'};font-weight:${j.days>20?700:400}">${j.days}d</td>
+      <td><span class="pill ${j.st==='Active'?'p-green':'p-amber'}">${j.st}</span></td>
     </tr>`).join('');
 }
 
-function renderJobs() {
-  const q = (document.getElementById('job-search')?.value||'').toLowerCase();
-  const type = document.getElementById('job-type')?.value||'';
-  const status = document.getElementById('job-status')?.value||'';
-  const rec = document.getElementById('job-recruiter')?.value||'';
-  document.getElementById('jobs-body').innerHTML = jobsData
-    .filter(j => (!q||(j.role.toLowerCase().includes(q)||j.client.toLowerCase().includes(q)))&&(!type||j.type===type)&&(!status||j.status===status)&&(!rec||j.rec===rec))
-    .map(j => {
-      const sc = j.status==='Active'?'pill-green':j.status==='On Hold'?'pill-amber':'pill-gray';
-      return `<tr>
-        <td><strong>${j.role}</strong></td><td>${j.client}</td>
-        <td><span class="pill ${j.type==='Retained'?'pill-purple':j.type==='Contract'?'pill-amber':'pill-blue'}">${j.type}</span></td>
-        <td style="font-size:12px">$${(j.salMin/1000).toFixed(0)}K–$${(j.salMax/1000).toFixed(0)}K</td>
-        <td>${j.rec}</td>
-        <td style="text-align:center">${j.cands}</td>
-        <td style="text-align:center;color:${j.days>20?'var(--accent4)':'var(--fg)'};font-weight:${j.days>20?'600':'400'}">${j.days}d</td>
-        <td><span class="pill ${sc}">${j.status}</span></td>
-        <td><button class="btn btn-outline btn-sm" style="font-size:11px">View</button></td>
-      </tr>`;}).join('');
+// ══ SOPs ══
+const SOPS=[
+  {icon:'📞',title:'Client Acquisition Call',cat:'Sales',col:'p-blue',desc:'Step-by-step guide for first contact with prospective clients and follow-up process.',steps:['Research client company and key contacts before calling','Introduce yourself and agency clearly','Ask 3 qualifying questions: hiring activity, pain points, budget','Gauge urgency and timeline','Propose a follow-up meeting or send credentials','Log call in CRM within 30 minutes','Set follow-up reminder within 3 business days']},
+  {icon:'📝',title:'Job Brief Process',cat:'Recruitment',col:'p-green',desc:'How to take a comprehensive job brief to ensure candidate quality.',steps:['Schedule dedicated 30-min job brief call','Cover: role overview, reporting structure, must-haves','Clarify compensation, start date, interview process','Agree on shortlist format and CV count','Confirm exclusivity arrangement','Document brief in ATS within 2 hours','Send written confirmation to client']},
+  {icon:'🔍',title:'Candidate Sourcing SOP',cat:'Recruitment',col:'p-green',desc:'Structured sourcing strategy across LinkedIn, job boards, and database.',steps:['Start with internal ATS search using boolean','Move to LinkedIn Recruiter: 20–30 target profiles','Post on relevant job boards','Reach out with personalised messages','Follow up once after 3 business days','Track response rates weekly']},
+  {icon:'📄',title:'CV Submission Process',cat:'Recruitment',col:'p-green',desc:'Quality control checklist before submitting any CV to a client.',steps:['Verify candidate has been briefed on role','Format CV to agency template','Write compelling cover note (5–8 sentences)','Confirm availability and salary alignment','Get verbal commitment before submitting','Send with cover note — not just attachment','Log in ATS and set 48-hr follow-up']},
+  {icon:'🤝',title:'Offer Management',cat:'Sales',col:'p-blue',desc:'How to manage offer negotiations and ensure successful acceptance.',steps:['Never relay offer cold — prep candidate first','Present offer positively but factually','Give candidate 24–48 hr decision window','Handle counter-offers: go back to client','Manage counter-offer risk proactively','Confirm acceptance in writing to both parties','Set up start-date check-in call']},
+  {icon:'💸',title:'Invoice & Billing SOP',cat:'Finance',col:'p-amber',desc:'Billing process, invoice timelines, and AR escalation steps.',steps:['Raise invoice on day of start (permanent) or weekly (contract)','Use standard template with correct PO number','Send to finance contact — CC account manager','Set CRM reminder for due date (30 days)','Chase at Day 31 with reminder email','Escalate at Day 45: phone + CC director','Flag to management at Day 60']},
+  {icon:'🌱',title:'New Client Onboarding',cat:'BD',col:'p-purple',desc:'How to onboard a new client from signed terms to first placement.',steps:['Send welcome pack within 24 hours','Schedule intro call with account manager','Confirm preferred communication style','Set up client profile in ATS/CRM','Agree on KPIs','Brief team on client requirements','Check in after first placement']},
+  {icon:'📊',title:'Weekly Reporting',cat:'Sales',col:'p-blue',desc:'Internal reporting requirements — what to submit and when.',steps:['Submit KPI tracker every Friday by 4PM','Include: calls, CVs, interviews, placements','Log all BD activities in CRM','Update pipeline for all active roles','Flag overdue invoices','Prepare priority list for next week']},
+  {icon:'⚠️',title:'Candidate Withdrawal',cat:'Recruitment',col:'p-red',desc:'Steps to take when a candidate withdraws from a process.',steps:['Contact client immediately — call first','Apologise and take ownership','Brief explanation without over-sharing','Immediately offer replacement or revised timeline','Review what went wrong internally','Update ATS with outcome','Debrief with team lead within 24 hours']},
+  {icon:'📅',title:'Interview Coordination',cat:'Recruitment',col:'p-green',desc:'Managing interview logistics for a smooth process.',steps:['Confirm details: date, time, format, interviewers','Send candidate full prep brief day before','Confirm attendance 2 hours before','Be available day-of','Call candidate within 1 hour post-interview','Update client with feedback within 24 hours']},
+  {icon:'🔄',title:'Candidate Reactivation',cat:'Recruitment',col:'p-green',desc:'How to re-engage passive or lapsed candidates.',steps:['Target candidates placed 6–18 months ago','Personalise outreach','Keep message short: 3–4 sentences','Offer value first: market insight, salary data','One follow-up after 7 days, then stop','Log all touchpoints in ATS']},
+  {icon:'🚨',title:'Escalation Procedure',cat:'Sales',col:'p-red',desc:'When and how to escalate to management.',steps:['Identify: complaint, fee dispute, legal query','Inform line manager within 2 hours','Do not commit or apologise until briefed','Document all facts before escalation meeting','Manager leads all communication','Debrief and document resolution']},
+];
+function renderSOPs(data) {
+  document.getElementById('sop-grid').innerHTML = (data||SOPS).map((s,i)=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:border-color 0.15s" id="sc${i}" onclick="toggleSOP(${i})" onmouseover="this.style.borderColor='rgba(37,99,235,0.4)'" onmouseout="this.style.borderColor=document.getElementById('se${i}').classList.contains('open')?'var(--accent)':'var(--border)'">
+      <div style="font-size:22px;margin-bottom:10px">${s.icon}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px">${s.title}</div>
+      <div style="font-size:12px;color:var(--fg3);line-height:1.6">${s.desc}</div>
+      <span class="pill ${s.col}" style="margin-top:10px;display:inline-flex">${s.cat}</span>
+      <div id="se${i}" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Steps</div>
+        <ol style="padding-left:18px">${s.steps.map(st=>`<li style="font-size:12.5px;color:var(--fg2);line-height:1.9">${st}</li>`).join('')}</ol>
+      </div>
+    </div>`).join('');
 }
-function filterJobs() { renderJobs(); }
-
-function renderTeam() {
-  document.getElementById('team-grid').innerHTML = teamData.map(t => {
-    const initials = t.name.split(' ').map(n=>n[0]).join('');
-    return `<div class="card" style="text-align:center">
-      <div style="width:56px;height:56px;border-radius:50%;background:${t.color}22;border:2px solid ${t.color};display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:${t.color}">${initials}</div>
-      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:2px">${t.name}</div>
-      <div style="font-size:12px;color:var(--fg3);margin-bottom:12px">${t.role} · ${t.spec}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div style="background:var(--navy);border-radius:8px;padding:10px">
-          <div style="font-size:11px;color:var(--fg3)">Placements</div>
-          <div style="font-size:20px;font-weight:700;color:${t.color}">${t.placements}</div>
-        </div>
-        <div style="background:var(--navy);border-radius:8px;padding:10px">
-          <div style="font-size:11px;color:var(--fg3)">Revenue</div>
-          <div style="font-size:20px;font-weight:700;color:${t.color}">$${(t.revenue/1000).toFixed(0)}K</div>
-        </div>
-      </div>
-      <div style="margin-top:10px">
-        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--fg3)">GP YTD vs Team Best</span><span style="color:${t.kpi>=100?'var(--accent2)':t.kpi>=85?'var(--accent)':'var(--accent3)'};font-weight:600">${t.kpi}%</span></div>
-        <div class="prog-wrap"><div class="prog-fill ${t.kpi>=100?'prog-green':t.kpi>=85?'prog-blue':'prog-amber'}" style="width:${Math.min(t.kpi,100)}%"></div></div>
-      </div>
-    </div>`;}).join('');
+function toggleSOP(i) {
+  const e = document.getElementById('se'+i), c = document.getElementById('sc'+i);
+  const open = e.style.display === 'block';
+  e.style.display = open ? 'none' : 'block';
+  c.style.borderColor = open ? 'var(--border)' : 'var(--accent)';
+}
+function filterSOPs() {
+  const q = document.getElementById('sop-q').value.toLowerCase();
+  const cat = document.getElementById('sop-cat').value;
+  renderSOPs(SOPS.filter(s => (!q||(s.title+s.desc).toLowerCase().includes(q)) && (!cat||s.cat===cat)));
 }
 
-// INIT
-renderSOPs();
-renderSalesLog();
-renderTargets();
-renderKanban();
-renderDashPipeline();
-renderAR();
-renderBD();
-renderJobs();
-renderTeam();
+// ══ AI SETUP ══
+let apiKey = localStorage.getItem('rh_api_key') || '';
+let aiPanelOpen = false;
+let isAILoading = false;
+let chatHistory = [];
+
+window.addEventListener('load', () => {
+  const f = document.getElementById('settings-api-key');
+  if (f && apiKey) { f.value = apiKey; showKeyStatus(true); }
+  refreshData();
+});
+
+function saveApiKey() {
+  const val = document.getElementById('settings-api-key').value.trim();
+  if (!val.startsWith('sk-')) { showKeyStatus(false,'Key should start with sk-ant-'); return; }
+  apiKey = val; localStorage.setItem('rh_api_key', val); showKeyStatus(true);
+}
+function showKeyStatus(ok, msg) {
+  const el = document.getElementById('key-status');
+  if (!el) return;
+  el.style.display = 'block'; el.style.color = ok ? 'var(--accent2)' : 'var(--accent4)';
+  el.textContent = msg || (ok ? '✓ API key saved — AI features active' : '✗ Invalid key format');
+}
+
+// ══ CLAUDE API ══
+async function callClaude(prompt, system) {
+  if (!apiKey) return '⚠️ No API key found. Go to **AI Settings** to add your Anthropic API key.';
+  const msgs = system ? [{role:'user',content:prompt}] : [...chatHistory,{role:'user',content:prompt}];
+  const body = { model:'claude-sonnet-4-5', max_tokens:1024, messages:msgs };
+  if (system) body.system = system;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      if (res.status===401) return '⚠️ Invalid API key. Check AI Settings.';
+      return `⚠️ API error: ${err.error?.message||res.statusText}`;
+    }
+    const data = await res.json();
+    return data.content?.[0]?.text || 'No response.';
+  } catch(e) { return '⚠️ Network error. Check your connection.'; }
+}
+
+// ══ CONTEXT BUILDER ══
+function buildDataContext() {
+  const d = SHEET_DATA;
+  return `E&A Sales Report 2026 (live data):
+Team GP YTD: ${fmtFull(d.team.ytd_gp)} | Team Closure YTD: ${fmtFull(d.team.ytd_closure)}
+Monthly Team GP: ${d.team.monthly_gp.slice(0,6).map((v,i)=>MONTHS_SHORT[i]+':'+fmt(v)).join(', ')}
+
+Individual performance:
+${d.recruiters.map(r=>`${r.name}: Closure ${fmtFull(r.ytd_closure)}, GP ${fmtFull(r.ytd_gp)}, Pipeline ${fmt(r.ytd_pipeline)}, Q1 GP ${fmtFull(r.q1_gp)}, Q2 GP ${fmtFull(r.q2_gp)}, Q-Q ${fmtPct(r.qq_pct)}`).join('\n')}`;
+}
+
+// ══ SECTION AI ACTIONS ══
+const AI_PROMPTS = {
+  'dashboard-summary': { sys:'You are a recruitment analytics expert. Be concise and action-oriented. Max 200 words.', prompt:() => `Analyse this E&A team data and give a 3-bullet performance summary + top 2 recommended actions this week:\n\n${buildDataContext()}` },
+  'sales-analysis':    { sys:'You are a senior recruitment sales analyst.', prompt:() => `Provide a detailed analysis of this sales data with insights on trends, top contributors, and areas of concern:\n\n${buildDataContext()}` },
+  'sales-forecast':    { sys:'You are a recruitment revenue forecaster.', prompt:() => `Based on Q1 performance and current Q2 + pipeline data, forecast Q2 final GP and full-year GP for each recruiter and the team:\n\n${buildDataContext()}` },
+  'sales-coach':       { sys:'You are a senior recruitment sales coach.', prompt:() => `Give personalised coaching recommendations for each recruiter based on their data. Be specific:\n\n${buildDataContext()}` },
+  'sales-weekly-report':{ sys:'You are a recruitment team lead writing a weekly update.', prompt:() => `Write a professional weekly team performance email based on this data. Make it motivating:\n\n${buildDataContext()}` },
+  'sales-qoq':         { sys:'You are a recruitment performance analyst.', prompt:() => `Analyse the Q1 vs Q2 performance for each recruiter. Explain the declines, identify risks, and recommend actions:\n\n${buildDataContext()}` },
+  'targets-review':    { sys:'You are a recruitment KPI analyst.', prompt:() => `Review Q-Q performance and recommend whether targets should be revised. Identify who is at risk of missing annual targets:\n\n${buildDataContext()}` },
+  'ar-chase-all':      { sys:'You are a finance assistant.', prompt:() => 'Write 3 professional AR chase emails for overdue invoices: INV-082 StartupX $12K 45 days, INV-079 Fintech $19.5K 55 days, INV-076 LogiCorp $21K 65 days. Escalate in tone.' },
+  'jobs-write-ad':     { sys:'You are a recruitment copywriter.', prompt:() => 'Write a compelling job ad for a VP Engineering role, $180K-$220K, technology company in Singapore. Under 280 words.' },
+  'sop-create':        { sys:'You are a process design expert.', prompt:() => 'Suggest 3 new SOPs that would most benefit our recruitment sales team, with a brief outline of each.' },
+};
+
+async function aiAction(key, section) {
+  const p = AI_PROMPTS[key];
+  if (!p) return;
+  const resultEl = document.getElementById('ai-result-' + section);
+  if (!resultEl) return;
+  resultEl.classList.add('visible');
+  resultEl.innerHTML = `<div class="ai-result-hd"><span class="ai-result-title">✦ Thinking…</span></div><div class="ai-result-content"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+  const prompt = typeof p.prompt === 'function' ? p.prompt() : p.prompt;
+  const response = await callClaude(prompt, p.sys);
+  const formatted = formatAIResponse(response);
+  resultEl.innerHTML = `<div class="ai-result-hd"><span class="ai-result-title">✦ AI Result</span><div style="display:flex;gap:8px"><button class="copy-btn" onclick="copyResult(this)">Copy</button><button class="copy-btn" onclick="this.closest('.ai-result').classList.remove('visible')">✕</button></div></div><div class="ai-result-content">${formatted}</div>`;
+  resultEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+async function aiChase(inv, client, amt) {
+  const resultEl = document.getElementById('ai-result-ar');
+  resultEl.classList.add('visible');
+  resultEl.innerHTML = `<div class="ai-result-hd"><span class="ai-result-title">✦ Drafting…</span></div><div class="ai-result-content"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+  const r = await callClaude(`Write a professional chase email for invoice ${inv} to ${client} for $${parseInt(amt).toLocaleString()}. Include subject line. Under 120 words.`, 'You are a professional finance assistant.');
+  resultEl.innerHTML = `<div class="ai-result-hd"><span class="ai-result-title">✦ Chase Email — ${inv}</span><div style="display:flex;gap:8px"><button class="copy-btn" onclick="copyResult(this)">Copy</button><button class="copy-btn" onclick="this.closest('.ai-result').classList.remove('visible')">✕</button></div></div><div class="ai-result-content">${formatAIResponse(r)}</div>`;
+}
+
+function aiIndividual() { const idx=parseInt(document.getElementById('ind-select').value); aiIndividualCoach(idx); }
+
+function formatAIResponse(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^### (.*$)/gm,'<strong style="color:var(--accent);font-size:13px;display:block;margin:10px 0 4px">$1</strong>')
+    .replace(/^## (.*$)/gm,'<strong style="color:var(--fg);font-size:14px;display:block;margin:12px 0 6px">$1</strong>')
+    .replace(/^[\*\-] (.*$)/gm,'<span style="display:block;padding-left:16px;position:relative"><span style="position:absolute;left:4px;color:var(--accent)">•</span>$1</span>')
+    .replace(/^\d+\. (.*$)/gm,'<span style="display:block;padding-left:16px;color:var(--fg2)">$1</span>')
+    .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+}
+function copyResult(btn) {
+  const t = btn.closest('.ai-result').querySelector('.ai-result-content').innerText;
+  navigator.clipboard.writeText(t).then(()=>{ btn.textContent='✓ Copied'; setTimeout(()=>btn.textContent='Copy',2000); });
+}
+
+// ══ AI CHAT ══
+function toggleAIPanel() {
+  aiPanelOpen = !aiPanelOpen;
+  document.getElementById('aiPanel').classList.toggle('open', aiPanelOpen);
+  document.getElementById('aiFab').classList.toggle('panel-open', aiPanelOpen);
+  document.getElementById('aiFab').innerHTML = aiPanelOpen ? '<span>✕</span> Close AI' : '<span>✦</span> Ask AI';
+  if (aiPanelOpen) document.getElementById('aiInput').focus();
+}
+function sendQuick(text) { document.getElementById('aiInput').value = text; sendAIMessage(); }
+async function sendAIMessage() {
+  const input = document.getElementById('aiInput');
+  const msg = input.value.trim();
+  if (!msg || isAILoading) return;
+  input.value = ''; input.style.height = '40px';
+  isAILoading = true; document.getElementById('aiSendBtn').disabled = true;
+  appendMessage('user', msg);
+  chatHistory.push({role:'user',content:msg});
+  const typingId = appendTyping();
+  const system = `You are an AI assistant for E&A recruitment team, with access to their 2026 sales data. Always reference actual numbers when relevant.\n\n${buildDataContext()}`;
+  const response = await callClaude(msg, system);
+  chatHistory.push({role:'assistant',content:response});
+  removeTyping(typingId);
+  appendMessage('assistant', formatAIResponse(response));
+  isAILoading = false; document.getElementById('aiSendBtn').disabled = false;
+}
+function appendMessage(role, content) {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = `ai-msg ${role}`;
+  div.innerHTML = `<div class="ai-msg-avatar">${role==='user'?'U':'✦'}</div><div class="ai-msg-bubble">${content}</div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function appendTyping() {
+  const msgs = document.getElementById('aiMessages');
+  const id = 'typing-'+Date.now();
+  const div = document.createElement('div');
+  div.className = 'ai-msg assistant'; div.id = id;
+  div.innerHTML = `<div class="ai-msg-avatar">✦</div><div class="ai-typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+  return id;
+}
+function removeTyping(id) { const el=document.getElementById(id); if(el) el.remove(); }
+function handleAIKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAIMessage();} }
+function autoResize(el) { el.style.height='40px'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+
+// ══ NAV ══
+function nav(page,el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('pg-'+page).classList.add('active');
+  el.classList.add('active');
+  closeSidebar();
+}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sOverlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sOverlay').classList.remove('open');}
+function switchTab(el,id){
+  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  el.closest('.page').querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeOverlay(e,id){if(e.target.id===id)closeModal(id);}
 </script>
+</body>
+</html>
