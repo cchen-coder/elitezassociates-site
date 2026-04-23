@@ -202,19 +202,18 @@ tbody tr:hover td { background:rgba(37,99,235,0.03); }
 }
 @media (max-width:640px) { .grid-2,.grid-3{grid-template-columns:1fr;} .fr{grid-template-columns:1fr;} .topbar-sub{display:none;} .ai-panel{width:100%;} .ai-fab.panel-open{display:none;} }
 /* ── SITE GATE ── */
-#site-gate { position:fixed; inset:0; z-index:9999; background:radial-gradient(ellipse at 80% 110%, #7a3020 0%, #3a1a10 38%, #1c1c1c 68%); display:flex; align-items:center; justify-content:center; }
+#site-gate { position:fixed; inset:0; z-index:9999; background:#000; display:flex; align-items:center; justify-content:center; }
 #site-gate.hidden { display:none; }
-.gate-card { background:#fff; border-radius:20px; padding:52px 48px 44px; width:100%; max-width:480px; text-align:center; box-shadow:0 24px 64px rgba(0,0,0,0.45); }
-.gate-title { font-family:'Syne',sans-serif; font-size:30px; font-weight:800; color:#111; letter-spacing:-0.02em; margin-bottom:12px; }
-.gate-title span { color:#c0532a; }
-.gate-sub { font-size:14px; color:#888; margin-bottom:34px; line-height:1.65; }
+.gate-card { background:#fff; border-radius:16px; padding:52px 48px 44px; width:100%; max-width:480px; text-align:center; box-shadow:0 24px 64px rgba(0,0,0,0.6); }
+.gate-title { font-family:'Calibri','Calibri Body',Georgia,serif; font-size:32px; font-weight:700; color:#000; letter-spacing:-0.01em; margin-bottom:12px; }
+.gate-sub { font-size:14px; color:#666; margin-bottom:34px; line-height:1.65; }
 .gate-input-wrap { position:relative; margin-bottom:14px; }
-.gate-input { width:100%; padding:15px 48px 15px 18px; border:1.5px solid #e2e8f0; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:15px; color:#111; outline:none; transition:border-color 0.15s; background:#fafafa; }
-.gate-input:focus { border-color:#c0532a; background:#fff; }
-.gate-eye { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; line-height:1; color:#94a3b8; padding:0; }
-.gate-btn { width:100%; padding:17px; background:#c0532a; color:#fff; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; cursor:pointer; transition:background 0.15s; margin-bottom:14px; }
-.gate-btn:hover { background:#a8411a; }
-.gate-error { font-size:13px; color:#c0532a; font-weight:500; min-height:18px; }
+.gate-input { width:100%; padding:15px 48px 15px 18px; border:1.5px solid #d1d5db; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; color:#000; outline:none; transition:border-color 0.15s; background:#f9f9f9; }
+.gate-input:focus { border-color:#000; background:#fff; }
+.gate-eye { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; line-height:1; color:#999; padding:0; }
+.gate-btn { width:100%; padding:17px; background:#000; color:#fff; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; cursor:pointer; transition:background 0.15s; margin-bottom:14px; }
+.gate-btn:hover { background:#222; }
+.gate-error { font-size:13px; color:#000; font-weight:500; min-height:18px; }
 </style>
 </head>
 <body>
@@ -222,7 +221,7 @@ tbody tr:hover td { background:rgba(37,99,235,0.03); }
 <!-- SITE GATE -->
 <div id="site-gate">
   <div class="gate-card">
-    <div class="gate-title">Elitez<span>.</span>HR</div>
+    <div class="gate-title">Elitez &amp; Associates</div>
     <div class="gate-sub">This system is private. Enter the site password to continue.</div>
     <div class="gate-input-wrap">
       <input type="password" id="gate-input" class="gate-input" placeholder="Site password" autocomplete="off" onkeydown="if(event.key==='Enter')checkGate()">
@@ -542,15 +541,9 @@ tbody tr:hover td { background:rgba(37,99,235,0.03); }
 <script>
 // ── SITE GATE ──
 const SITE_PASSWORD = 'elitez2025'; // change this to your desired password
-(function() {
-  if (sessionStorage.getItem('gate_auth') === '1') {
-    document.getElementById('site-gate').classList.add('hidden');
-  }
-})();
 function checkGate() {
   const val = document.getElementById('gate-input').value;
   if (val === SITE_PASSWORD) {
-    sessionStorage.setItem('gate_auth', '1');
     document.getElementById('site-gate').classList.add('hidden');
   } else {
     document.getElementById('gate-error').textContent = 'Incorrect password. Please try again.';
